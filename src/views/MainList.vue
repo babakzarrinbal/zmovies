@@ -26,84 +26,15 @@ export default {
   name: "Dashboard",
   data() {
     return {
-      movies: [
-        {
-          _id: 1,
-          year: 2018,
-          toyear: 2019,
-          title: "testmovie",
-          img:
-            "https://m.media-amazon.com/images/M/MV5BMTAzNDNkYTItMTcyNi00ZTEyLWJhMjgtZDI4MjBmMzg1ZWI5XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_UX182_CR0,0,182,268_AL_.jpg",
-          imdbid: "tt5168736",
-          countries: ["us", "ca", "uk"],
-          imdbrate: 5.7,
-          trailers: [
-            {
-              releasedate: "",
-              links: [{ url: "", quality: "" }]
-            }
-          ],
-          links: [
-            {
-              quality: "480p",
-              url: "https://links.com/links.mkv",
-              extractpage: "https://test.test"
-            },
-            {
-              quality: "720p",
-              url: "https://links.com/links.mkv",
-              extractpage: "https://test.test"
-            }
-          ]
-        },
-        {
-          _id: 2,
-          year: 2019,
-          toyear: 0,
-          title: "testmovie2",
-          img: "https://test.com/img.png",
-          imdbid: "tt4236770",
-          countries: ["us", "ca", "uk"],
-          imdbrate: 5.7,
-          links: [
-            {
-              quality: "480p",
-              url: "https://links.com/links.mkv",
-              extractpage: "https://test.test"
-            },
-            {
-              quality: "720p",
-              url: "https://links.com/links.mkv",
-              extractpage: "https://test.test"
-            }
-          ]
-        },
-        {
-          _id: 3,
-          year: 2018,
-          toyear: 0,
-          title: "testmovie3",
-          img: "https://test.com/img.png",
-          imdbid: "tt9151704",
-          countries: ["us"],
-          imdbrate: 5.7,
-          links: [
-            {
-              quality: "480p",
-              url: "https://links.com/links.mkv",
-              extractpage: "https://test.test"
-            },
-            {
-              quality: "720p",
-              url: "https://links.com/links.mkv",
-              extractpage: "https://test.test"
-            }
-          ]
-        }
-      ],
+      movies: [],
       imdbid: "",
       window
     };
+  },
+  async created() {
+    this.movies = await window
+      .fetch("db/movies/list/lastupdated/1.json", {cache: "no-store"})
+      .then(res => res.json());
   },
   mounted() {},
   async beforeDestroy() {},

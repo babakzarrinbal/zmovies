@@ -5,10 +5,10 @@
       <login v-if="!$root.user"></login>
       <div v-else style="position:relative;height:100%">
         <div id="header">
-          <span
+          <!-- <span
             class="float-left ml-3"
             style="font-size: 20px;font-weight: bold;color: white;user-select: none;"
-          >ZMovies</span>
+          >ZMovies</span>-->
           <div
             class="float-right"
             style="float:right;height:30px;width:30px;padding:4px;"
