@@ -3,7 +3,7 @@ node_modules
 .backups
 .history
 public/db
-docs/db
+# docs/db
 # /dist
 
 # local env files
