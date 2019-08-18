@@ -36,7 +36,7 @@
             @click="nav($event,'/')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==1}"
           >
-            <img src="/img/icon/list.png" alt />
+            <img src="img/icon/list.png" alt />
           </a>
           <a
             @click="nav($event,'/drivers')"
