@@ -48,7 +48,9 @@ Vue.config.productionTip = true;
 new Vue({
   router,
   data: {
-    user: null
+    user: null,
+    showmoviedetail: false,
+    movie: {}
   },
   render: h => h(App)
 }).$mount("#app");

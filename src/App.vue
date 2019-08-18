@@ -21,6 +21,9 @@
         <transition name="slideleft">
           <settings v-if="settingvis" v-on:hide="settingvis =0"></settings>
         </transition>
+        <transition name="slideleft">
+          <moviedetail v-if="$root.showmoviedetail" v-on:hide="$root.showmoviedetail =0"></moviedetail>
+        </transition>
 
         <transition :name="'component-'+transisionname">
           <keep-alive>
@@ -54,6 +57,7 @@
 <script>
 import login from "@/components/login.vue";
 import settings from "@/components/settings.vue";
+import moviedetail from "@/components/moviedetail.vue";
 export default {
   data() {
     return {
@@ -64,7 +68,8 @@ export default {
   },
   components: {
     login,
-    settings
+    settings,
+    moviedetail
   },
   async created() {
     // connect to native app on ios or android
