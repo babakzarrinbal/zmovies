@@ -18,7 +18,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import "toastr/build/toastr.min.css";
 
 //socket
-// import sio from "./socket";
+// import sio from "./connections/socket";
+
+//http
+import http from "./connections/http";
 
 // custom styles
 import "./scss/globalstyle.scss";
@@ -33,15 +36,16 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 require("./serviceworker/registerServiceWorker");
-// Vue.mixin({
-//   data: function() {
-//     return {
-//       socket: sio.socket,
-//       socketcall: sio.socketcall,
-//       socketreconnect: sio.socketreconnect
-//     };
-//   }
-// });
+Vue.mixin({
+  data: function() {
+    return {
+      ...http
+      // socket: sio.socket,
+      // socketcall: sio.socketcall,
+      // socketreconnect: sio.socketreconnect
+    };
+  }
+});
 
 // initializing app
 Vue.config.productionTip = true;

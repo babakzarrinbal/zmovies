@@ -8,6 +8,9 @@ if (process.env.NODE_ENV === "production" || prodtest) {
     socket: {
       url: "https://diliviri.com/",
       namespace: "superadmin"
+    },
+    http:{
+      main:"/db/"
     }
   };
 } else {
@@ -16,6 +19,9 @@ if (process.env.NODE_ENV === "production" || prodtest) {
     socket: {
       url: "localhost:3007/",
       namespace: "superadmin"
+    },
+    http:{
+      main:""
     }
   };
 }
