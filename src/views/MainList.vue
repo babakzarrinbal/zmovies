@@ -42,13 +42,18 @@ export default {
     return {
       movies: [],
       imdbid: "",
-      window
+      // window
     };
   },
   async created() {
-    this.movies = await window
-      .fetch("db/movies/list/lastupdated/1.json", { cache: "no-cache" })
-      .then(res => res.json());
+    // this.movies = await window
+    //   .fetch("db/movies/list/lastupdated/1.json", { cache: "no-cache" })
+    //   .then(res => res.json());
+    this.movies = await this.get(
+      "movies/list/lastupdated/1.json",
+      {},
+      { cache: "no-cache" }
+    );
   },
   mounted() {},
   async beforeDestroy() {},

@@ -14,6 +14,7 @@ var http = {};
  */
 http.get = (url, options = {}, fopt = {}) =>
   new Promise(async (reso, rej) => {
+      
     let defaulturl = url;
     let reject = !options.resolve
       ? async error => {
@@ -36,7 +37,7 @@ http.get = (url, options = {}, fopt = {}) =>
           }
         };
     let resolve = !options.resolve
-      ? rej
+      ? reso
       : data => {
           reso({ data, error: null });
         };
@@ -58,6 +59,7 @@ http.get = (url, options = {}, fopt = {}) =>
     if (!response.ok) return reject(response);
     try{
         finalresult = await response.json();
+        
     }catch(e){
         try{
             finalresult = await response.text();

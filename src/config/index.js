@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === "production" || prodtest) {
       namespace: "superadmin"
     },
     http:{
-      main:"/db/"
+      main:"db/"
     }
   };
 } else {
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "production" || prodtest) {
       namespace: "superadmin"
     },
     http:{
-      main:""
+      main:"db/"
     }
   };
 }
