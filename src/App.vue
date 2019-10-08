@@ -46,9 +46,9 @@
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==2}"
           >Drivers</a>
           <a
-            @click="nav($event,'/merchants')"
+            @click="nav($event,'/tts')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==3}"
-          >Merchants</a>
+          >TTS</a>
         </div>
       </div>
     </div>
@@ -148,7 +148,7 @@ export default {
 }
 #nav {
   // padding: 10px;
-  height: 50px;
+  height: 35px;
   z-index: 99;
   position: absolute;
   width: 100%;
@@ -180,7 +180,7 @@ export default {
   overflow: hidden;
 }
 .mainrouteview {
-  height: calc(100% - 50px);
+  height: calc(100% - 35px);
   padding-top: 30px;
   overflow: auto;
   position: relative;

@@ -1,5 +1,5 @@
 // my own proto functions
-// require("./utils/prototypes");
+require("./utils/prototypes");
 import serverconfig from "./config";
 window.serverconfig = serverconfig;
 

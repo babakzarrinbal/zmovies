@@ -2,10 +2,11 @@
   <div id="maincontainer">
     <div class="btn close" @click="$emit('hide')">X</div>
     <div class="videocontainer">
-      <video :src="currentlink"></video>
+      <video :src="currentlink" controls></video>
     </div>
     <div class="detail">
       <div class="title">{{movie.title}}</div>
+      <a href="http://fdc5.berlincloud.pw/storage/26/Power.S06E02.480p.WEB-DL.Hastidl.mkv">downloadlink</a>
     </div>
   </div>
 </template>
@@ -13,11 +14,28 @@
 export default {
   data() {
     return {
-      currentlink:''
+      currentlink: "http://fdc5.berlincloud.pw/storage/26/Power.S06E01.480p.WEB-DL.Hastidl.mkv"
     };
   },
   components: {},
-  async created() {},
+  async created() {
+    window.requestFileSystem =
+      window.requestFileSystem || window.webkitRequestFileSystem;
+
+    window.webkitStorageInfo.requestQuota(
+      window.PERSISTENT,
+      1024 * 1024,
+      function(grantedBytes) {
+        window.requestFileSystem(
+          window.PERSISTENT,
+          grantedBytes,
+          console.log,
+          console.error
+        );
+      },
+      console.error
+    );
+  },
   methods: {},
   watch: {},
   computed: {
@@ -42,9 +60,12 @@ export default {
 }
 .videocontainer {
   width: 100%;
+  min-height: 300px;
+  max-height: 50%;
   background: black;
   video {
-    width: 100%;
+    max-width: 100%;
+    height: 100%;
   }
 }
 </style>
