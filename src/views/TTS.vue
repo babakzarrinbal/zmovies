@@ -5,7 +5,7 @@
       :style="{'fontSize':pbsettings.fontsize+'px'}"
       id="texteditor"
       @click="showpopup=null"
-      v-model="story.text"
+      v-model="currstory"
     ></textarea>
     <div id="controllers">
       <div class="title">{{story.title||""}}</div>
@@ -13,7 +13,7 @@
         <div class="previous reverse button" @click="prev()">
           <img src="img/ttsicons/next.svg" alt="prev" class="btnimg" />
         </div>
-        <div class="playpause button" @click="play()">
+        <div class="playpause button" @click="showpopup= null;play()">
           <img
             :src="'img/ttsicons/'+(playing?'pause':'play')+'.svg'"
             alt="play/pause"
@@ -68,11 +68,25 @@
         </div>
         <div class="form-group numberinput">
           <label for="speed">Speed:</label>
-          <div class="decrease" @click="pbsettings.speed =(pbsettings.speed - 0.1).round(1) ">
+          <div
+            class="decrease"
+            @click="pbsettings.speed =(pbsettings.speed- 0.1)<0?0:(pbsettings.speed - 0.1).round(1) "
+          >
             <img src="img/ttsicons/minus.svg" class="signimg" />
           </div>
-          <input type="number" class="form-control" id="speed" v-model="pbsettings.speed" />
-          <div class="increase" @click="pbsettings.speed =(pbsettings.speed + 0.1).round(1) ">
+          <input
+            type="number"
+            class="form-control ninput"
+            step="0.1"
+            min="0"
+            @change="pbsettings.speed = pbsettings.speed<0?0 :pbsettings.speed;"
+            id="speed"
+            v-model="pbsettings.speed"
+          />
+          <div
+            class="increase"
+            @click="pbsettings.speed =pbsettings.speed<0?0:(pbsettings.speed + 0.1).round(1) "
+          >
             <img src="img/ttsicons/plus.svg" class="signimg" />
           </div>
         </div>
@@ -83,7 +97,7 @@
           </div>
           <input
             type="number"
-            class="form-control"
+            class="form-control ninput"
             id="pitch"
             step="1"
             min="0"
@@ -102,7 +116,7 @@
           </div>
           <input
             type="number"
-            class="form-control"
+            class="form-control ninput"
             min="1"
             step="1"
             id="fontsize"
@@ -115,16 +129,21 @@
       </div>
     </div>
     <div v-if="showpopup == 'list'" class="storylistpopup">
-      <h5>Stories</h5>
+      <h5 class="heading">
+        <div class="listbtns newbtn btn btn-info" @click="newstory()">New</div>
+        <div class="listbtns savebtn btn btn-primary" @click="importstory()">Import</div>
+        <div class="listbtns importbtn btn btn-success" @click="savestorycontent()">Save</div>Stories
+      </h5>
       <ul class="list-group">
         <li
           class="list-group-item"
-          :class="{'active':s.id == (story||{}).id}"
+          :class="{'active':s.active}"
           v-for="(s,i) in stories"
           :key="i"
           @click="selectstory(s.id)"
         >
           <span class="title">{{s.title}}</span>
+          <span class="close" @click.stop="removestory(s)">X</span>
         </li>
       </ul>
     </div>
@@ -136,12 +155,19 @@
 export default {
   name: "TTS",
   data() {
+    let stories = JSON.parse(window.localStorage.getItem("ttsstories") || "[]");
+    let story = stories.find(s => s.active) || {};
+    let currstory = story.id
+      ? window.localStorage.getItem("ttsstory_" + story.id) || ""
+      : "";
     return {
+      window,
       speech: window.speechSynthesis,
-      stories: JSON.parse(window.localStorage.getItem("ttsstories") || "[]"),
-      lastplayingstory: window.localStorage.getItem("ttslaststory"),
-      story: {},
+      stories,
+      currstory,
+      story,
       playing: false,
+      currentspeechutterance: null,
       showpopup: null,
       pbsettings: {
         follow: true,
@@ -163,28 +189,53 @@ export default {
       }
     }, 500);
 
-    window.localStorage.setItem(
-      "ttsstories",
-      JSON.stringify([
-        {
-          id: 1,
-          position: 5,
-          title: "testing text",
-          text: `About six hours later, I walked out, Mom by my side. It was late afternoon, and I had eventually managed to puzzle together the little bits I could remember of the events of the morning. I had been cycling back home, following my usual route, when a delivery guy in a parked van had opened his door without checking for traffic. I had no recollection of the actual moment, but I guess I ended up flying through the air and hitting my head against the sidewalk -- leaving me with half-a-dozen stitches at the back of my head and a concussion. Nothing too serious, luckily -- even if, for the coming week and to be on the safe side, I had to avoid any significant exercise, as well as avoid being alone in the event of possible dizziness.
-                The timing couldn't have been worse: my friends and I were supposed to go the very next day for a whole week of canyon adventuring, something that was obviously very much out of question now. Tagging along was not even an option, so basically, my vacation was a no-go.`,
-          bookmarks: [{ id: 1, title: "test bookmark", from: 2, to: 4 }]
-        }
-      ])
-    );
+    // window.localStorage.setItem(
+    //   "ttsstories",
+    //   JSON.stringify([
+    //     {
+    //       id: 1,
+    //       position: 5,
+    //       title: "testing text",
+    //       bookmarks: [{ id: 1, title: "test bookmark", from: 2, to: 4 }]
+    //     }
+    //   ])
+    // );
+
+    // window.localStorage.setItem(
+    //   "ttsstory_1",
+    //   `About six hours later, I walked out, Mom by my side. It was late afternoon, and I had eventually managed to puzzle together the little bits I could remember of the events of the morning. I had been cycling back home, following my usual route, when a delivery guy in a parked van had opened his door without checking for traffic. I had no recollection of the actual moment, but I guess I ended up flying through the air and hitting my head against the sidewalk -- leaving me with half-a-dozen stitches at the back of my head and a concussion. Nothing too serious, luckily -- even if, for the coming week and to be on the safe side, I had to avoid any significant exercise, as well as avoid being alone in the event of possible dizziness.
+    //             The timing couldn't have been worse: my friends and I were supposed to go the very next day for a whole week of canyon adventuring, something that was obviously very much out of question now. Tagging along was not even an option, so basically, my vacation was a no-go.`
+    // );
   },
   async beforeDestroy() {},
   methods: {
-    selectstory(id) {
-      if (id == this.story.id) return (this.story = {});
-      this.story = this.stories.find(s => s.id == id) || {};
-      this.lastplayingstory = this.story.id;
-      this.lastplayingstory &&
-        window.localStorage.setItem("ttslaststory", this.lastplayingstory);
+    async selectstory(id) {
+      await this.savestory(false, true);
+      if (id == this.story.id) {
+        this.stories.find(s => s.id == id).active = false;
+        this.currstory = "";
+        this.story = {};
+        return this.savestory();
+      }
+      this.story.active = false;
+      this.play(false);
+      this.story = this.stories.find(s => s.id == id);
+      this.story.active = true;
+      this.savestory();
+      this.currstory =
+        window.localStorage.getItem("ttsstory_" + this.story.id) || "";
+    },
+    async savestory(stories = true, story = false) {
+      await null;
+      stories &&
+        window.localStorage.setItem("ttsstories", JSON.stringify(this.stories));
+      story &&
+        this.story.id &&
+        window.localStorage.setItem(
+          "ttsstory_" + this.story.id,
+          this.currstory
+        );
+      return;
     },
     play(onoff = null) {
       if (onoff !== null) this.playing = !onoff;
@@ -197,7 +248,8 @@ export default {
       this.playingfunc();
     },
     playingfunc() {
-      if (!this.playing) return;
+      if (!this.playing || this.speech.speaking) return;
+      this.savestory();
       let ta = this.$refs.textarea;
       if (this.story.position >= ta.value.length) {
         this.playing = false;
@@ -235,8 +287,43 @@ export default {
         if (_self.playing) _self.story.position = firstsentence;
         return _self.playingfunc();
       };
+      this.currentspeechutterance = msg;
 
       window.speechSynthesis.speak(msg);
+    },
+    async newstory() {
+      this.story.active = false;
+      await this.savestory();
+      this.currstory = "";
+      this.story = {};
+    },
+    async removestory(s) {
+      if (!confirm("are you sure to delete \n" + s.title)) return;
+      this.stories = this.stories.filter(st => s.id != st.id);
+      if (this.story.id == s.id) {
+        this.story = {};
+        this.currstory = "";
+        console.log(this.currstory);
+      }
+      this.savestory(true, true);
+    },
+    async importstory() {},
+    async savestorycontent() {
+      let title = this.story.title || "";
+      while (title === "") {
+        title = window.prompt("Story title");
+      }
+      if (!title) return;
+      this.story.title = title;
+      if (!this.story.id) {
+        this.story.id = !this.stories.length
+          ? 1
+          : this.stories.reduce((max, c) => (c.id > max ? c.id : max), 1) + 1;
+        this.stories.unshift(this.story);
+      }
+      this.story.active = true;
+      await this.savestory(true, true);
+      window.alert("story saved");
     },
     next() {
       if (!this.story.id) return;
@@ -261,24 +348,38 @@ export default {
       this.story.position = firstsentence;
       this.play(true);
     },
-    prev() {
+    async prev() {
       if (!this.story.id) return;
-      this.play(false);
+      await new Promise(resolve => {
+        if (this.speech.speaking) {
+          window.a = this.currentspeechutterance;
+          if (!this.currentspeechutterance) return resolve();
+          this.currentspeechutterance.onend = () => {
+            resolve();
+          };
+          this.play(false);
+        }
+      });
       let ta = this.$refs.textarea;
-      if (!this.story.position) return;
+      if (!this.story.position || this.story.position <= 0) {
+        this.story.position = 0;
+        return;
+      }
+
       let firstsentence = window.Math.max(
         ta.value.lastIndexOf(".", this.story.position),
         ta.value.lastIndexOf("\n", this.story.position)
       );
+
       if (firstsentence == -1) {
         this.story.position = 0;
         this.play(true);
         return;
       }
-      while (this.story.position - firstsentence < 15) {
+      while (firstsentence != -1 && this.story.position - firstsentence < 15) {
         firstsentence = window.Math.max(
-          ta.value.lastIndexOf(".", firstsentence),
-          ta.value.lastIndexOf("\n", firstsentence)
+          ta.value.lastIndexOf(".", firstsentence - 1),
+          ta.value.lastIndexOf("\n", firstsentence - 1)
         );
       }
       if (this.story.position - firstsentence > 500) {
@@ -289,6 +390,7 @@ export default {
         this.play(true);
         return;
       }
+
       this.story.position = firstsentence;
       this.play(true);
     },
@@ -434,8 +536,9 @@ export default {
         flex-grow: 1;
         text-align: left;
       }
-      input {
+      .ninput {
         width: 50px;
+        padding: 1px;
       }
       .decrease,
       .increase {
@@ -456,12 +559,30 @@ export default {
   }
 }
 .storylistpopup {
+  .heading {
+    position: relative;
+  }
+  .listbtns {
+    position: absolute;
+    padding: 0 10px;
+    top: 0;
+    &.newbtn {
+      left: 0;
+    }
+    &.importbtn {
+      left: 65px;
+    }
+    &.savebtn {
+      right: 0;
+    }
+  }
   .list-group {
     height: calc(100% - 32px);
     overflow: auto;
     padding-bottom: 20px;
     .list-group-item {
       @extend .flexcenter;
+      margin-bottom: 10px;
       padding: 5px;
       .title {
         text-align: left;
@@ -469,6 +590,10 @@ export default {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+      }
+      .close {
+        color: red;
+        cursor: pointer;
       }
     }
   }
