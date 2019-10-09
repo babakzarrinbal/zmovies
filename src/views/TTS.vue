@@ -6,6 +6,7 @@
       id="texteditor"
       @click="showpopup=null"
       v-model="currstory"
+      :readonly="!pbsettings.editable"
     ></textarea>
     <div id="controllers">
       <div class="title">{{story.title||""}}</div>
@@ -58,6 +59,11 @@
         <div class="checkbox">
           <label>
             <input type="checkbox" v-model="pbsettings.follow" />Follow
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" v-model="pbsettings.editable" />Edit
           </label>
         </div>
         <div class="form-group">
@@ -170,6 +176,7 @@ export default {
       currentspeechutterance: null,
       showpopup: null,
       pbsettings: {
+        editable: false,
         follow: true,
         voices: [],
         voice: null,
