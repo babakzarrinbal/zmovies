@@ -1,15 +1,32 @@
 <template>
   <div class="container-fluid pl-0 pr-0" style="margin:0;width:100%;max-width: 100%;">
+    <div class="pages">
+      <div v-if="story.id" class="prev pbtn" @click="selectstory(story.id-1)">
+        <img
+          src="img/ttsicons/next.svg"
+          width="25px"
+          height="25px"
+          alt="prev"
+          style="transform:rotateZ(180deg)"
+          class="btnimg"
+        />
+      </div>
+      <span v-if="story.id">{{ stories.findIndex(s=>s.id==story.id)+1}} / {{(stories||[]).length }}</span>
+      <div v-if="story.id" class="prev pbtn" @click="selectstory(story.id+1)">
+        <img src="img/ttsicons/next.svg" width="25px" height="25px" alt="prev" class="btnimg" />
+      </div>
+      <span v-if="!story.id">New</span>
+    </div>
     <textarea
       ref="textarea"
       :style="{'fontSize':pbsettings.fontsize+'px'}"
       id="texteditor"
       @click="showpopup=null"
       v-model="currstory"
-      :readonly="!pbsettings.editable"
+      :readonly="pbsettings.follow"
     ></textarea>
     <div id="controllers">
-      <div class="title">{{story.title||""}}</div>
+      <div class="title" @click="changetitle()">{{story.title||""}}</div>
       <div class="palyback">
         <div class="previous reverse button" @click="prev()">
           <img src="img/ttsicons/next.svg" alt="prev" class="btnimg" />
@@ -58,12 +75,7 @@
       <div class="inputs">
         <div class="checkbox">
           <label>
-            <input type="checkbox" v-model="pbsettings.follow" />Follow
-          </label>
-        </div>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" v-model="pbsettings.editable" />Edit
+            <input type="checkbox" v-model="pbsettings.follow" />Follow (lock the text)
           </label>
         </div>
         <div class="form-group">
@@ -137,8 +149,17 @@
     <div v-if="showpopup == 'list'" class="storylistpopup">
       <h5 class="heading">
         <div class="listbtns newbtn btn btn-info" @click="newstory()">New</div>
-        <div class="listbtns savebtn btn btn-primary" @click="importstory()">Import</div>
-        <div class="listbtns importbtn btn btn-success" @click="savestorycontent()">Save</div>Stories
+        <div class="listbtns importbtn btn btn-primary" @click="$refs.fileinput.click()">Import</div>
+        <input
+          type="file"
+          style="display:none"
+          ref="fileinput"
+          @change="importstory($event)"
+          multiple="true"
+          directory="true"
+        />
+        <div class="listbtns exportbtn btn btn-warning" @click="exportalltexts()">exportall</div>Stories
+        <div class="listbtns savebtn btn btn-success" @click="savestorycontent()">Save</div>Stories
       </h5>
       <ul class="list-group">
         <li
@@ -162,6 +183,7 @@ export default {
   name: "TTS",
   data() {
     let stories = JSON.parse(window.localStorage.getItem("ttsstories") || "[]");
+    stories.sort((a, b) => (a.id > b.id ? 1 : -1));
     let story = stories.find(s => s.active) || {};
     let currstory = story.id
       ? window.localStorage.getItem("ttsstory_" + story.id) || ""
@@ -176,7 +198,6 @@ export default {
       currentspeechutterance: null,
       showpopup: null,
       pbsettings: {
-        editable: false,
         follow: true,
         voices: [],
         voice: null,
@@ -195,38 +216,22 @@ export default {
         window.clearInterval(getvoicesinterval);
       }
     }, 500);
-
-    // window.localStorage.setItem(
-    //   "ttsstories",
-    //   JSON.stringify([
-    //     {
-    //       id: 1,
-    //       position: 5,
-    //       title: "testing text",
-    //       bookmarks: [{ id: 1, title: "test bookmark", from: 2, to: 4 }]
-    //     }
-    //   ])
-    // );
-
-    // window.localStorage.setItem(
-    //   "ttsstory_1",
-    //   `About six hours later, I walked out, Mom by my side. It was late afternoon, and I had eventually managed to puzzle together the little bits I could remember of the events of the morning. I had been cycling back home, following my usual route, when a delivery guy in a parked van had opened his door without checking for traffic. I had no recollection of the actual moment, but I guess I ended up flying through the air and hitting my head against the sidewalk -- leaving me with half-a-dozen stitches at the back of my head and a concussion. Nothing too serious, luckily -- even if, for the coming week and to be on the safe side, I had to avoid any significant exercise, as well as avoid being alone in the event of possible dizziness.
-    //             The timing couldn't have been worse: my friends and I were supposed to go the very next day for a whole week of canyon adventuring, something that was obviously very much out of question now. Tagging along was not even an option, so basically, my vacation was a no-go.`
-    // );
   },
   async beforeDestroy() {},
   methods: {
     async selectstory(id) {
+      let thisstory = this.stories.find(s => s.id == id);
+      if (!thisstory) return;
       await this.savestory(false, true);
       if (id == this.story.id) {
-        this.stories.find(s => s.id == id).active = false;
+        thisstory.active = false;
         this.currstory = "";
         this.story = {};
         return this.savestory();
       }
       this.story.active = false;
       this.play(false);
-      this.story = this.stories.find(s => s.id == id);
+      this.story = thisstory;
       this.story.active = true;
       this.savestory();
       this.currstory =
@@ -298,24 +303,62 @@ export default {
 
       window.speechSynthesis.speak(msg);
     },
-    async newstory() {
+    async newstory(title = "", text = "", pos = 0) {
       this.story.active = false;
       await this.savestory();
-      this.currstory = "";
+      this.currstory = text;
       this.story = {};
+      if (title) this.story.title = title;
+      if (pos) this.story.position = pos;
+      this.pbsettings.follow = false;
+      return;
     },
-    async removestory(s) {
-      if (!confirm("are you sure to delete \n" + s.title)) return;
+    async removestory(s, quiet) {
+      if (!quiet && !confirm("are you sure to delete \n" + s.title)) return;
       this.stories = this.stories.filter(st => s.id != st.id);
+      window.localStorage.removeItem("ttsstory_" + s.id);
       if (this.story.id == s.id) {
         this.story = {};
         this.currstory = "";
-        console.log(this.currstory);
       }
       this.savestory(true, true);
     },
-    async importstory() {},
-    async savestorycontent() {
+    async importstory(event) {
+      // let fileHandle = await window.chooseFileSystemEntries();
+      // const file = await fileHandle.getFile();
+      // const contents = await file.text();
+
+      let files = event.target.files;
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].type == "application/pdf") continue;
+        let text = await files[i].text();
+        try {
+          let stories = JSON.parse(text);
+          if (!Array.isArray(stories)) throw Error;
+          for (let j = 0; j < stories.length; j++) {
+            let s = stories[j];
+            await this.newstory(s.title, s.story, s.position);
+            await this.savestorycontent(true);
+          }
+        } catch (e) {
+          await this.newstory(files[i].name, text);
+          await this.savestorycontent(true);
+        }
+      }
+      return;
+    },
+    changetitle() {
+      if (!this.story.id) return;
+      let newtitle = "";
+      while (newtitle === "") {
+        newtitle = window.prompt("Story title");
+      }
+      if (newtitle) {
+        this.story.title = newtitle;
+        this.savestory(true, true);
+      }
+    },
+    async savestorycontent(hidden) {
       let title = this.story.title || "";
       while (title === "") {
         title = window.prompt("Story title");
@@ -326,11 +369,12 @@ export default {
         this.story.id = !this.stories.length
           ? 1
           : this.stories.reduce((max, c) => (c.id > max ? c.id : max), 1) + 1;
-        this.stories.unshift(this.story);
+        this.stories.push(this.story);
       }
       this.story.active = true;
       await this.savestory(true, true);
-      window.alert("story saved");
+      this.pbsettings.follow = true;
+      !hidden && window.alert("story saved");
     },
     next() {
       if (!this.story.id) return;
@@ -407,6 +451,48 @@ export default {
       let ta = this.$refs.textarea;
       this.story.position = ta.selectionStart || 0;
       this.play(true);
+    },
+    async exportalltexts() {
+      let filename = "";
+      while (filename === "") {
+        filename = window.prompt("Story title");
+      }
+      if (!filename) return;
+      let stories = [...this.stories];
+      await this.savestory(true, true);
+      stories.forEach(s => {
+        s.story = s.id
+          ? window.localStorage.getItem("ttsstory_" + s.id) || ""
+          : "";
+      });
+      this.downloadfile(JSON.stringify(this.stories), filename);
+      this.removeall();
+    },
+    removeall() {
+      let _self = this;
+      this.stories.forEach(s => _self.removestory(s, true));
+      this.stories = [];
+      this.newstory();
+    },
+    downloadfile(data, filename, type) {
+      new Blob();
+      let file = new Blob([data], { type: type, name: filename });
+      if (window.navigator.msSaveOrOpenBlob)
+        // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+      else {
+        // Others
+        let a = window.document.createElement("a"),
+          url = window.URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        window.document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+          window.document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
+      }
     }
   },
   computed: {}
@@ -418,11 +504,27 @@ export default {
   padding-left: 0;
   overflow: hidden;
 }
+.pages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid gray;
+  .currpage {
+    width: 60px;
+    border: none;
+    outline: none;
+    background-color: #efefef;
+    text-align: center;
+  }
+  .pbtn {
+    margin: 0 10px;
+  }
+}
 #texteditor {
   display: block;
   width: 100%;
   resize: none;
-  height: calc(100% - 50px);
+  height: calc(100% - 77px);
   padding: 10px 10px 70px 10px;
   border: none;
   outline: none;
@@ -568,18 +670,25 @@ export default {
 .storylistpopup {
   .heading {
     position: relative;
+    height: 45px;
   }
   .listbtns {
     position: absolute;
     padding: 0 10px;
-    top: 0;
     &.newbtn {
+      top: -7px;
       left: 0;
     }
     &.importbtn {
-      left: 65px;
+      top: 20px;
+      left: 0px;
     }
     &.savebtn {
+      top: -7px;
+      right: 0;
+    }
+    &.exportbtn {
+      top: 20px;
       right: 0;
     }
   }
