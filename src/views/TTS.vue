@@ -247,6 +247,9 @@ export default {
       }
     }, 500);
   },
+  activated() {
+    console.log("activated");
+  },
   async beforeDestroy() {},
   methods: {
     async selectstory(id) {
@@ -569,7 +572,7 @@ export default {
       window.confirm("remove all stories?") && this.removeall();
     },
     removeall(alarm) {
-      if (alarm && window.confirm("are you sure to remove all Stories?"))
+      if (alarm && !window.confirm("are you sure to remove all Stories?"))
         return;
       let _self = this;
       this.stories.forEach(s => _self.removestory(s, true));
