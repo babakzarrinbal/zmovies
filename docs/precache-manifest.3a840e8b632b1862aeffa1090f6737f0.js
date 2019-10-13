@@ -1,27 +1,35 @@
 self.__precacheManifest = [
   {
-    "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
-    "url": "/zmovies/img/ttsicons/pause.svg"
+    "revision": "783c7836eb439161b1f9fa84430c7bf9",
+    "url": "/zmovies/img/ttsicons/list.svg"
   },
   {
     "revision": "536ef82528266ef7716cc76f13c960e4",
     "url": "/zmovies/img/loaders/movie.gif"
   },
   {
+    "revision": "cf52a80447621ef7ed21",
+    "url": "/zmovies/js/chunk-15663170.a577cf63.js"
+  },
+  {
+    "revision": "00cbdf4292bae80e28b17943fba956a9",
+    "url": "/zmovies/vendors/pdf.js"
+  },
+  {
+    "revision": "a7d8694612bae9bb7fb2",
+    "url": "/zmovies/js/chunk-vendors.204ced91.js"
+  },
+  {
+    "revision": "101a8cc034ef8270a3f2",
+    "url": "/zmovies/js/pdfjsWorker.783a4eb0.js"
+  },
+  {
     "revision": "e8ff09c5bc760608e7431f14032fd293",
     "url": "/zmovies/logo.png"
   },
   {
-    "revision": "2edcae548ea189952347",
-    "url": "/zmovies/js/chunk-vendors.026629ec.js"
-  },
-  {
-    "revision": "3e0ce5f888a9f895ed04bd459d0df0d1",
+    "revision": "6e6afe052eaa6904058a638ad9a4419a",
     "url": "/zmovies/index.html"
-  },
-  {
-    "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
-    "url": "/zmovies/img/loaders/puff.svg"
   },
   {
     "revision": "735ab4f94fbcd57074377afca324c813",
@@ -32,8 +40,16 @@ self.__precacheManifest = [
     "url": "/zmovies/img/ttsicons/settings.svg"
   },
   {
+    "revision": "ce554f9aa15080bcf5d30af0549b0779",
+    "url": "/zmovies/img/ttsicons/refresh.svg"
+  },
+  {
     "revision": "8181039b61cfc565659fa059c039e706",
     "url": "/zmovies/img/ttsicons/plus.svg"
+  },
+  {
+    "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
+    "url": "/zmovies/img/loaders/puff.svg"
   },
   {
     "revision": "e3eca74d0d77d7299725c27949c59ebd",
@@ -44,28 +60,24 @@ self.__precacheManifest = [
     "url": "/zmovies/img/ttsicons/bookmark.svg"
   },
   {
-    "revision": "783c7836eb439161b1f9fa84430c7bf9",
-    "url": "/zmovies/img/ttsicons/list.svg"
-  },
-  {
-    "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
-    "url": "/zmovies/img/ttsicons/minus.svg"
-  },
-  {
-    "revision": "8a6197757719675b5fa0",
-    "url": "/zmovies/js/app.69ad1802.js"
+    "revision": "9ae9e198a6831fdd5809",
+    "url": "/zmovies/js/app.51ee50fe.js"
   },
   {
     "revision": "3a1311d5e71f7d0d9cf75005f1992426",
     "url": "/zmovies/img/ttsicons/next.svg"
   },
   {
-    "revision": "7db92e62bee29459989694fb4526bc16",
-    "url": "/zmovies/img/ttsicons/play.svg"
+    "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
+    "url": "/zmovies/img/ttsicons/minus.svg"
   },
   {
-    "revision": "ce554f9aa15080bcf5d30af0549b0779",
-    "url": "/zmovies/img/ttsicons/refresh.svg"
+    "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
+    "url": "/zmovies/img/ttsicons/pause.svg"
+  },
+  {
+    "revision": "7db92e62bee29459989694fb4526bc16",
+    "url": "/zmovies/img/ttsicons/play.svg"
   },
   {
     "revision": "39153b06929a746eee884dd665ab0dc8",
@@ -96,11 +108,15 @@ self.__precacheManifest = [
     "url": "/zmovies/db/movies/list/lastupdated/1.json"
   },
   {
-    "revision": "2edcae548ea189952347",
+    "revision": "a7d8694612bae9bb7fb2",
     "url": "/zmovies/css/chunk-vendors.6acb9ff2.css"
   },
   {
-    "revision": "8a6197757719675b5fa0",
-    "url": "/zmovies/css/app.e5de5f19.css"
+    "revision": "9ae9e198a6831fdd5809",
+    "url": "/zmovies/css/app.998a0c24.css"
+  },
+  {
+    "revision": "f67be7be98360e46bca24906ec24d6ae",
+    "url": "/zmovies/ab16c4397fff012be764.worker.js"
   }
 ];

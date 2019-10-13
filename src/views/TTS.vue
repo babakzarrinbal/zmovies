@@ -80,8 +80,12 @@
         </div>
         <div class="form-group">
           <label style="margin:0;">Select Voice:</label>
-          <select class="form-control" v-model="pbsettings.voice">
-            <option v-for="(v, i) in pbsettings.voices" :value="v" :key="i">{{v.name}}</option>
+          <select
+            class="form-control"
+            v-model="pbsettings.voiceindex"
+            @change="pbsettings.voice = pbsettings.voices[pbsettings.voiceindex]"
+          >
+            <option v-for="(v, i) in pbsettings.voices" :value="i" :key="i">{{v.name}}</option>
           </select>
         </div>
         <div class="form-group numberinput">
@@ -179,12 +183,14 @@
 </template>
 
 <script>
+// import { PDFJS } from "@/utils/pdf.min.js";
 export default {
   name: "TTS",
   data() {
     let stories = JSON.parse(window.localStorage.getItem("ttsstories") || "[]");
     stories.sort((a, b) => (a.id > b.id ? 1 : -1));
     let story = stories.find(s => s.active) || {};
+    console.log(story);
     let currstory = story.id
       ? window.localStorage.getItem("ttsstory_" + story.id) || ""
       : "";
@@ -192,13 +198,14 @@ export default {
       window,
       speech: window.speechSynthesis,
       stories,
-      currstory,
+      currstory: "",
       story,
       playing: false,
       currentspeechutterance: null,
       showpopup: null,
       pbsettings: {
         follow: true,
+        voiceindex: 0,
         voices: [],
         voice: null,
         speed: 1.3,
@@ -208,14 +215,14 @@ export default {
     };
   },
   created() {
-    let getvoicesinterval = window.setInterval(() => {
-      let voices = window.speechSynthesis.getVoices();
-      if (voices.length) {
-        this.pbsettings.voices = voices;
-        this.pbsettings.voice = this.pbsettings.voices[0];
-        window.clearInterval(getvoicesinterval);
-      }
-    }, 500);
+    // let getvoicesinterval = window.setInterval(() => {
+    //   let voices = window.speechSynthesis.getVoices();
+    //   if (voices.length) {
+    //     this.pbsettings.voices = voices;
+    //     this.pbsettings.voice = this.pbsettings.voices[0];
+    //     window.clearInterval(getvoicesinterval);
+    //   }
+    // }, 500);
   },
   async beforeDestroy() {},
   methods: {
@@ -330,7 +337,54 @@ export default {
 
       let files = event.target.files;
       for (let i = 0; i < files.length; i++) {
-        if (files[i].type == "application/pdf") continue;
+        if (files[i].type == "application/pdf") {
+          var file = files[i];
+          var fileReader = new FileReader();
+          let resolve, reject;
+          let promise = new Promise((r, j) => {
+            resolve = r;
+            reject = j;
+          });
+
+          fileReader.onload = async function() {
+            var typedarray = new Uint8Array(this.result);
+            let pdfjs = await import("pdfjs-dist/webpack");
+            let pdf = await pdfjs.getDocument(typedarray);
+            console.log(pdf);
+            var maxPages = pdf._pdfInfo.numPages;
+            var countPromises = []; // collecting all page promises
+            for (var j = 1; j <= maxPages; j++) {
+              var page = pdf.getPage(j);
+              countPromises.push(
+                page.then(function(page) {
+                  var textContent = page.getTextContent();
+                  return textContent.then(function(text) {
+                    return text.items
+                      .map(function(s) {
+                        return s.str;
+                      })
+                      .join("");
+                  });
+                })
+              );
+            }
+            // Wait for all pages and join text
+            return Promise.all(countPromises)
+              .then(resolve)
+              .catch(reject);
+          };
+          fileReader.readAsArrayBuffer(file);
+          try {
+            let texts = await promise;
+            for (let j = 0; j < texts.length; j++) {
+              await this.newstory(files[i].name + "_" + j, texts[j]);
+              await this.savestorycontent(true);
+            }
+          } catch (e) {
+            console.error(e);
+            continue;
+          }
+        }
         let text = await files[i].text();
         try {
           let stories = JSON.parse(text);
@@ -358,7 +412,7 @@ export default {
         this.savestory(true, true);
       }
     },
-    async savestorycontent(hidden) {
+    async savestorycontent() {
       let title = this.story.title || "";
       while (title === "") {
         title = window.prompt("Story title");
@@ -374,7 +428,7 @@ export default {
       this.story.active = true;
       await this.savestory(true, true);
       this.pbsettings.follow = true;
-      !hidden && window.alert("story saved");
+      // !hidden && window.alert("story saved");
     },
     next() {
       if (!this.story.id) return;
@@ -466,7 +520,7 @@ export default {
           : "";
       });
       this.downloadfile(JSON.stringify(this.stories), filename);
-      this.removeall();
+      window.confirm("remove all stories?") && this.removeall();
     },
     removeall() {
       let _self = this;
