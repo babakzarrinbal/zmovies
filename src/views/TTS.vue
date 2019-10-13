@@ -215,14 +215,14 @@ export default {
     };
   },
   created() {
-    // let getvoicesinterval = window.setInterval(() => {
-    //   let voices = window.speechSynthesis.getVoices();
-    //   if (voices.length) {
-    //     this.pbsettings.voices = voices;
-    //     this.pbsettings.voice = this.pbsettings.voices[0];
-    //     window.clearInterval(getvoicesinterval);
-    //   }
-    // }, 500);
+    let getvoicesinterval = window.setInterval(() => {
+      let voices = window.speechSynthesis.getVoices();
+      if (voices.length) {
+        this.pbsettings.voices = voices;
+        this.pbsettings.voice = this.pbsettings.voices[0];
+        window.clearInterval(getvoicesinterval);
+      }
+    }, 500);
   },
   async beforeDestroy() {},
   methods: {
