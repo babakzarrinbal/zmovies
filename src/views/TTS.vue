@@ -151,21 +151,43 @@
       </div>
     </div>
     <div v-if="showpopup == 'list'" class="storylistpopup">
-      <h5 class="heading">
-        <div class="listbtns newbtn btn btn-info" @click="newstory()">New</div>
-        <div class="listbtns importbtn btn btn-primary" @click="$refs.fileinput.click()">Import</div>
-        <input
-          type="file"
-          style="display:none"
-          ref="fileinput"
-          @change="importstory($event)"
-          multiple="true"
-          directory="true"
-        />
-        <div class="listbtns exportbtn btn btn-warning" @click="exportalltexts()">exportall</div>Stories
-        <div class="listbtns savebtn btn btn-success" @click="savestorycontent()">Save</div>Stories
+      <h5 class="heading m-0">
+        Stories
+        <div
+          class="btn py-0"
+          style="position:absolute; top:-6px;right:-3px;"
+          :class="{'btn-primary':pbsettings.listactions,'btn-light': !pbsettings.listactions}"
+          @click="pbsettings.listactions = !pbsettings.listactions"
+        >Actions</div>
       </h5>
-      <ul class="list-group">
+      <input
+        type="file"
+        style="display:none"
+        ref="fileinput"
+        @change="importstory($event)"
+        multiple="true"
+        directory="true"
+      />
+      <div
+        class="actions flexcenter mb-1 justify-content-between pt-1"
+        style="border-top:solid 1px gray"
+        v-if="pbsettings.listactions"
+      >
+        <div class="left flexcenter" style="flex-direction:column;align-items: flex-start;">
+          <div class="listbtns btn btn-info mb-1 py-0" @click="newstory()">New</div>
+          <div
+            class="listbtns btn btn-primary mb-1 py-0"
+            @click="$refs.fileinput.click()"
+          >Import file</div>
+          <div class="listbtns btn btn-primary mb-1 py-0" @click="importfromurl()">Import url</div>
+        </div>
+        <div class="right flexcenter" style="flex-direction:column;align-items: flex-end;">
+          <div class="listbtns btn btn-success mb-1 py-0" @click="savestorycontent()">Save</div>
+          <div class="listbtns btn btn-warning mb-1 py-0" @click="exportalltexts()">Export all</div>
+          <div class="listbtns btn btn-danger mb-1 py-0" @click="removeall(true)">Remove all</div>
+        </div>
+      </div>
+      <ul class="list-group pt-1" style="border-top:1px solid gray;">
         <li
           class="list-group-item"
           :class="{'active':s.active}"
@@ -190,7 +212,6 @@ export default {
     let stories = JSON.parse(window.localStorage.getItem("ttsstories") || "[]");
     stories.sort((a, b) => (a.id > b.id ? 1 : -1));
     let story = stories.find(s => s.active) || {};
-    console.log(story);
     let currstory = story.id
       ? window.localStorage.getItem("ttsstory_" + story.id) || ""
       : "";
@@ -198,7 +219,7 @@ export default {
       window,
       speech: window.speechSynthesis,
       stories,
-      currstory: "",
+      currstory,
       story,
       playing: false,
       currentspeechutterance: null,
@@ -210,11 +231,13 @@ export default {
         voice: null,
         speed: 1.3,
         pitch: 1,
-        fontsize: 13
+        fontsize: 13,
+        listactions: false
       }
     };
   },
   created() {
+    window.importfromurl = this.importfromurl;
     let getvoicesinterval = window.setInterval(() => {
       let voices = window.speechSynthesis.getVoices();
       if (voices.length) {
@@ -401,6 +424,29 @@ export default {
       }
       return;
     },
+    async importfromurl(url) {
+      url = url || "";
+      while (url === "") {
+        url = window.prompt("url to fetch");
+      }
+      if (!url) return;
+      try {
+        let text = await fetch(
+          "https://cors-anywhere.herokuapp.com/" + url
+        ).then(r => r.text());
+        let result = text
+          .match(/<body[^>]*>(.|[\n\r])*<\/body>/)[0] // get body text
+          .replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gi, "") // remove script tags
+          .replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gi, "") // remove style tags
+          .replace(/<[^>]*>/g, ""); // remove all tags
+        await this.newstory(url, result);
+        await this.savestorycontent(true);
+        return result;
+      } catch (e) {
+        console.log(e);
+        return;
+      }
+    },
     changetitle() {
       if (!this.story.id) return;
       let newtitle = "";
@@ -522,7 +568,9 @@ export default {
       this.downloadfile(JSON.stringify(this.stories), filename);
       window.confirm("remove all stories?") && this.removeall();
     },
-    removeall() {
+    removeall(alarm) {
+      if (alarm && window.confirm("are you sure to remove all Stories?"))
+        return;
       let _self = this;
       this.stories.forEach(s => _self.removestory(s, true));
       this.stories = [];
@@ -584,6 +632,7 @@ export default {
   outline: none;
 }
 #controllers {
+  background: white;
   position: relative;
   height: 50px;
   width: 100%;
@@ -726,30 +775,11 @@ export default {
     position: relative;
     height: 45px;
   }
-  .listbtns {
-    position: absolute;
-    padding: 0 10px;
-    &.newbtn {
-      top: -7px;
-      left: 0;
-    }
-    &.importbtn {
-      top: 20px;
-      left: 0px;
-    }
-    &.savebtn {
-      top: -7px;
-      right: 0;
-    }
-    &.exportbtn {
-      top: 20px;
-      right: 0;
-    }
-  }
+
   .list-group {
     height: calc(100% - 32px);
     overflow: auto;
-    padding-bottom: 20px;
+    padding-bottom: 50px;
     .list-group-item {
       @extend .flexcenter;
       margin-bottom: 10px;
