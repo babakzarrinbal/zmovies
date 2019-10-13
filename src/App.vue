@@ -84,12 +84,13 @@ export default {
       _self.userresolved = true;
       let preloader = document.getElementById("preloader");
       if (preloader) {
-        console.log();
         let eventfunc = () => {
+          window.clearTimeout(timer);
+          console.log("removed");
           preloader && preloader.parentNode.removeChild(preloader);
           preloader = null;
         };
-
+        let timer = window.setTimeout(eventfunc, 3000);
         preloader.addEventListener("transitionend", eventfunc);
         document.getElementById("preloader").style.opacity = 0;
       }

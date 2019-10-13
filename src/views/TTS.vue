@@ -200,7 +200,28 @@
         </li>
       </ul>
     </div>
-    <div v-if="showpopup == 'bookmark'" class="bookmarkspopup">bookmark</div>
+    <div v-if="showpopup == 'bookmark'" class="bookmarkspopup">
+      <h5 style="position:relative;">
+        bookmarks
+        <div
+          class="btn btn-success py-0"
+          style="position:absolute;top:0;left:0;"
+          @click="addbookmark"
+        >ADD</div>
+      </h5>
+      <ul class="list-group pt-1" style="border-top:1px solid gray;">
+        <li
+          class="list-group-item"
+          :class="{'active':b.active}"
+          v-for="(b,i) in story.bookmarks"
+          :key="i"
+          @click="gotobookmark(i)"
+        >
+          <span class="title">{{b.title}}</span>
+          <span class="close" @click.stop="removebookmark(i)">X</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -232,26 +253,41 @@ export default {
         speed: 1.3,
         pitch: 1,
         fontsize: 13,
-        listactions: false
+        listactions: false,
+        bmactions: false
       }
     };
   },
   created() {
     window.importfromurl = this.importfromurl;
+    let gettingvoices = false;
     let getvoicesinterval = window.setInterval(() => {
+      if (gettingvoices) return;
+      gettingvoices = true;
       let voices = window.speechSynthesis.getVoices();
       if (voices.length) {
         this.pbsettings.voices = voices;
         this.pbsettings.voice = this.pbsettings.voices[0];
         window.clearInterval(getvoicesinterval);
       }
-    }, 500);
+    }, 1500);
   },
   activated() {
-    console.log("activated");
+    if (Object.keys(this.$route.query).length) {
+      this.queryhandeler(this.$route.query);
+    }
   },
   async beforeDestroy() {},
   methods: {
+    queryhandeler(q) {
+      if (!q.url) return;
+      let router = this.$router;
+      router.replace({
+        ...router.currentRoute,
+        query: null
+      });
+      this.importfromurl(q.url);
+    },
     async selectstory(id) {
       let thisstory = this.stories.find(s => s.id == id);
       if (!thisstory) return;
@@ -269,18 +305,6 @@ export default {
       this.savestory();
       this.currstory =
         window.localStorage.getItem("ttsstory_" + this.story.id) || "";
-    },
-    async savestory(stories = true, story = false) {
-      await null;
-      stories &&
-        window.localStorage.setItem("ttsstories", JSON.stringify(this.stories));
-      story &&
-        this.story.id &&
-        window.localStorage.setItem(
-          "ttsstory_" + this.story.id,
-          this.currstory
-        );
-      return;
     },
     play(onoff = null) {
       if (onoff !== null) this.playing = !onoff;
@@ -344,6 +368,94 @@ export default {
       if (title) this.story.title = title;
       if (pos) this.story.position = pos;
       this.pbsettings.follow = false;
+      return;
+    },
+    next() {
+      if (!this.story.id) return;
+      this.play(false);
+      let ta = this.$refs.textarea;
+      if (!this.story.position) this.story.position = -1;
+      let firstsentence = window.Math.min(
+        ta.value.indexOf(".", this.story.position + 1),
+        ta.value.indexOf("\n", this.story.position + 1)
+      );
+      while (firstsentence != -1 && firstsentence - this.story.position < 15) {
+        firstsentence = window.Math.min(
+          ta.value.indexOf(".", firstsentence + 1),
+          ta.value.indexOf("\n", firstsentence + 1)
+        );
+      }
+      if (firstsentence - this.story.position > 500) {
+        firstsentence = ta.value.indexOf(" ", this.story.position + 500);
+      }
+      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence + 1;
+      if (this.story.position >= ta.value.length) return;
+      this.story.position = firstsentence;
+      this.play(true);
+    },
+    async prev() {
+      if (!this.story.id) return;
+      await new Promise(resolve => {
+        if (this.speech.speaking) {
+          window.a = this.currentspeechutterance;
+          if (!this.currentspeechutterance) return resolve();
+          this.currentspeechutterance.onend = () => {
+            resolve();
+          };
+          this.play(false);
+        }
+      });
+      let ta = this.$refs.textarea;
+      if (!this.story.position || this.story.position <= 0) {
+        this.story.position = 0;
+        return;
+      }
+
+      let firstsentence = window.Math.max(
+        ta.value.lastIndexOf(".", this.story.position),
+        ta.value.lastIndexOf("\n", this.story.position)
+      );
+
+      if (firstsentence == -1) {
+        this.story.position = 0;
+        this.play(true);
+        return;
+      }
+      while (firstsentence != -1 && this.story.position - firstsentence < 15) {
+        firstsentence = window.Math.max(
+          ta.value.lastIndexOf(".", firstsentence - 1),
+          ta.value.lastIndexOf("\n", firstsentence - 1)
+        );
+      }
+      if (this.story.position - firstsentence > 500) {
+        firstsentence = ta.value.lastIndexOf(" ", this.story.position - 500);
+      }
+      if (firstsentence == -1 || this.story.position <= 0) {
+        this.story.position = 0;
+        this.play(true);
+        return;
+      }
+
+      this.story.position = firstsentence;
+      this.play(true);
+    },
+    goto() {
+      if (!this.story.id) return;
+      this.play(false);
+      let ta = this.$refs.textarea;
+      this.story.position = ta.selectionStart || 0;
+      this.play(true);
+    },
+    async savestory(stories = true, story = false) {
+      await null;
+      stories &&
+        window.localStorage.setItem("ttsstories", JSON.stringify(this.stories));
+      story &&
+        this.story.id &&
+        window.localStorage.setItem(
+          "ttsstory_" + this.story.id,
+          this.currstory
+        );
       return;
     },
     async removestory(s, quiet) {
@@ -444,11 +556,11 @@ export default {
           .replace(/<[^>]*>/g, ""); // remove all tags
         await this.newstory(url, result);
         await this.savestorycontent(true);
-        return result;
       } catch (e) {
         console.log(e);
-        return;
       }
+      console.log("imported");
+      return;
     },
     changetitle() {
       if (!this.story.id) return;
@@ -478,82 +590,6 @@ export default {
       await this.savestory(true, true);
       this.pbsettings.follow = true;
       // !hidden && window.alert("story saved");
-    },
-    next() {
-      if (!this.story.id) return;
-      this.play(false);
-      let ta = this.$refs.textarea;
-      if (!this.story.position) this.story.position = -1;
-      let firstsentence = window.Math.min(
-        ta.value.indexOf(".", this.story.position + 1),
-        ta.value.indexOf("\n", this.story.position + 1)
-      );
-      while (firstsentence != -1 && firstsentence - this.story.position < 15) {
-        firstsentence = window.Math.min(
-          ta.value.indexOf(".", firstsentence + 1),
-          ta.value.indexOf("\n", firstsentence + 1)
-        );
-      }
-      if (firstsentence - this.story.position > 500) {
-        firstsentence = ta.value.indexOf(" ", this.story.position + 500);
-      }
-      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence + 1;
-      if (this.story.position >= ta.value.length) return;
-      this.story.position = firstsentence;
-      this.play(true);
-    },
-    async prev() {
-      if (!this.story.id) return;
-      await new Promise(resolve => {
-        if (this.speech.speaking) {
-          window.a = this.currentspeechutterance;
-          if (!this.currentspeechutterance) return resolve();
-          this.currentspeechutterance.onend = () => {
-            resolve();
-          };
-          this.play(false);
-        }
-      });
-      let ta = this.$refs.textarea;
-      if (!this.story.position || this.story.position <= 0) {
-        this.story.position = 0;
-        return;
-      }
-
-      let firstsentence = window.Math.max(
-        ta.value.lastIndexOf(".", this.story.position),
-        ta.value.lastIndexOf("\n", this.story.position)
-      );
-
-      if (firstsentence == -1) {
-        this.story.position = 0;
-        this.play(true);
-        return;
-      }
-      while (firstsentence != -1 && this.story.position - firstsentence < 15) {
-        firstsentence = window.Math.max(
-          ta.value.lastIndexOf(".", firstsentence - 1),
-          ta.value.lastIndexOf("\n", firstsentence - 1)
-        );
-      }
-      if (this.story.position - firstsentence > 500) {
-        firstsentence = ta.value.lastIndexOf(" ", this.story.position - 500);
-      }
-      if (firstsentence == -1 || this.story.position <= 0) {
-        this.story.position = 0;
-        this.play(true);
-        return;
-      }
-
-      this.story.position = firstsentence;
-      this.play(true);
-    },
-    goto() {
-      if (!this.story.id) return;
-      this.play(false);
-      let ta = this.$refs.textarea;
-      this.story.position = ta.selectionStart || 0;
-      this.play(true);
     },
     async exportalltexts() {
       let filename = "";
@@ -598,7 +634,34 @@ export default {
           window.URL.revokeObjectURL(url);
         }, 0);
       }
-    }
+    },
+    addbookmark() {
+      this.story.bookmarks = this.story.bookmarks || [];
+      let ta = this.$refs.textarea,
+        s =
+          window.Math.max(
+            ta.value.lastIndexOf(" ", ta.selectionStart || 0),
+            ta.value.lastIndexOf("\n", ta.selectionStart || 0)
+          ) + 1;
+      let e = ta.selectionEnd || 0;
+
+      let bookmark = {
+        start: s,
+        finish: e
+      };
+      bookmark.title =
+        ta.value.slice(
+          s,
+          ta.value.lastIndexOf(" ", e - s > 35 || s == e ? s + 35 : e)
+        ) + " ...";
+      this.story.bookmarks.push(bookmark);
+      this.savestory();
+    },
+    removebookmark(index) {
+      this.story.bookmarks = this.story.bookmarks.filter((v, i) => i != index);
+      this.savestory();
+    },
+    gotobookmark() {}
   },
   computed: {}
 };
@@ -735,40 +798,26 @@ export default {
   box-shadow: 0 -5px 15px gray;
   padding: 10px;
 }
-.pbsettingspopup {
-  .inputs {
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+
+.bookmardspopup {
+  .list-group {
     height: calc(100% - 32px);
     overflow: auto;
-    padding-bottom: 20px;
-    .numberinput {
+    padding-bottom: 50px;
+    .list-group-item {
       @extend .flexcenter;
-      label {
-        margin: 0;
-        flex-grow: 1;
+      margin-bottom: 10px;
+      padding: 5px;
+      .title {
         text-align: left;
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
-      .ninput {
-        width: 50px;
-        padding: 1px;
-      }
-      .decrease,
-      .increase {
-        margin: 0 10px;
-        &:active {
-          .signimg {
-            transform: translatey(2px);
-            filter: none;
-          }
-        }
-      }
-      .signimg {
-        width: 30px;
-        height: 30px;
-        filter: drop-shadow(0px 5px 2px gray);
+      .close {
+        color: red;
+        cursor: pointer;
       }
     }
   }
