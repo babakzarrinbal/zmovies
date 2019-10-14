@@ -641,7 +641,7 @@ export default {
           ? window.localStorage.getItem("ttsstory_" + s.id) || ""
           : "";
       });
-      this.downloadfile(JSON.stringify(this.stories), filename);
+      this.downloadfile(JSON.stringify(this.stories), filename + ".bztts");
       window.confirm("remove all stories?") && this.removeall();
     },
     removeall(alarm) {
