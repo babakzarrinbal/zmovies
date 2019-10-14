@@ -947,7 +947,6 @@ export default {
   }
 
   .list-group {
-    height: calc(100% - 138px);
     overflow: auto;
     padding-bottom: 50px;
     .list-group-item {
