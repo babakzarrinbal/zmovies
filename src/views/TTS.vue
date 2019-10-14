@@ -150,6 +150,33 @@
         </div>
       </div>
     </div>
+
+    <div v-if="showpopup == 'bookmark'" class="bookmarkspopup">
+      <h5 style="position:relative;">
+        bookmarks
+        <div
+          class="btn btn-success py-0"
+          style="position:absolute;top:0;left:0;"
+          @click="addbookmark"
+        >ADD</div>
+      </h5>
+      <ul class="list-group pt-1" style="border-top:1px solid gray;">
+        <li
+          class="list-group-item"
+          :class="{'active':b.active}"
+          v-for="(b,i) in story.bookmarks"
+          :key="i"
+          @click="gotobookmark(i)"
+        >
+          <span class="button" @click="playbookmark(i)">
+            <img src="img/ttsicons/play-full.svg" alt="play" class="btnimg" />
+          </span>
+          <span class="title">{{b.title}}</span>
+          <span class="close" @click.stop="removebookmark(i)">X</span>
+        </li>
+      </ul>
+    </div>
+
     <div v-if="showpopup == 'list'" class="storylistpopup">
       <h5 class="heading m-0">
         Stories
@@ -187,7 +214,11 @@
           <div class="listbtns btn btn-danger mb-1 py-0" @click="removeall(true)">Remove all</div>
         </div>
       </div>
-      <ul class="list-group pt-1" style="border-top:1px solid gray;">
+      <ul
+        class="list-group pt-1"
+        style="border-top:1px solid gray;"
+        :style="{height:pbsettings.listactions?'calc(100% - 138px)':'calc(100% - 32px)'}"
+      >
         <li
           class="list-group-item"
           :class="{'active':s.active}"
@@ -200,33 +231,10 @@
         </li>
       </ul>
     </div>
-    <div v-if="showpopup == 'bookmark'" class="bookmarkspopup">
-      <h5 style="position:relative;">
-        bookmarks
-        <div
-          class="btn btn-success py-0"
-          style="position:absolute;top:0;left:0;"
-          @click="addbookmark"
-        >ADD</div>
-      </h5>
-      <ul class="list-group pt-1" style="border-top:1px solid gray;">
-        <li
-          class="list-group-item"
-          :class="{'active':b.active}"
-          v-for="(b,i) in story.bookmarks"
-          :key="i"
-          @click="gotobookmark(i)"
-        >
-          <span class="title">{{b.title}}</span>
-          <span class="close" @click.stop="removebookmark(i)">X</span>
-        </li>
-      </ul>
-    </div>
   </div>
 </template>
 
 <script>
-// import { PDFJS } from "@/utils/pdf.min.js";
 export default {
   name: "TTS",
   data() {
@@ -319,21 +327,34 @@ export default {
     playingfunc() {
       if (!this.playing || this.speech.speaking) return;
       this.savestory();
+      this.story.position = this.story.position < 1 ? 0 : this.story.position;
       let ta = this.$refs.textarea;
       if (this.story.position >= ta.value.length) {
         this.playing = false;
         return (this.story.position = 0);
       }
       let msg = new window.SpeechSynthesisUtterance();
-      if (!this.story.position) this.story.position = -1;
-      let firstsentence = window.Math.min(
-        ta.value.indexOf(".", this.story.position + 1),
-        ta.value.indexOf("\n", this.story.position + 1)
+      let dotpos = ta.value.indexOf(
+        ".",
+        this.story.position + (!this.story.position ? 0 : 1)
       );
-      while (firstsentence != -1 && firstsentence - this.story.position < 15) {
+      let linebpos = ta.value.indexOf(
+        "\n",
+        this.story.position + (!this.story.position ? 0 : 1)
+      );
+      let firstsentence = window.Math.min(
+        dotpos == -1 ? 500 : dotpos,
+        linebpos == -1 ? 500 : linebpos
+      );
+      while (
+        !(dotpos == -1 && linebpos == -1) &&
+        firstsentence - this.story.position < 15
+      ) {
+        let dotpos = ta.value.indexOf(".", firstsentence + 1);
+        let linebpos = ta.value.indexOf("\n", firstsentence + 1);
         firstsentence = window.Math.min(
-          ta.value.indexOf(".", firstsentence + 1),
-          ta.value.indexOf("\n", firstsentence + 1)
+          dotpos == -1 ? 500 : dotpos,
+          linebpos == -1 ? 500 : linebpos
         );
       }
       if (firstsentence - this.story.position > 500) {
@@ -342,12 +363,16 @@ export default {
       firstsentence = firstsentence == -1 ? ta.value.length : firstsentence + 1;
 
       if (this.pbsettings.follow) {
-        ta.selectionStart = this.story.position + 1;
-        ta.selectionEnd = firstsentence;
+        ta.selectionStart = ta.selectionEnd =
+          this.story.position + (!this.story.position ? 0 : 1);
         ta.blur();
         ta.focus();
+        ta.selectionEnd = firstsentence;
       }
-      msg.text = ta.value.slice(this.story.position + 1, firstsentence);
+      msg.text = ta.value.slice(
+        this.story.position + (!this.story.position ? 0 : 1),
+        firstsentence
+      );
       if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
@@ -374,15 +399,29 @@ export default {
       if (!this.story.id) return;
       this.play(false);
       let ta = this.$refs.textarea;
-      if (!this.story.position) this.story.position = -1;
-      let firstsentence = window.Math.min(
-        ta.value.indexOf(".", this.story.position + 1),
-        ta.value.indexOf("\n", this.story.position + 1)
+      if (this.story.position < 1) this.story.position = 0;
+      let dotpos = ta.value.indexOf(
+        ".",
+        this.story.position + (!this.story.position ? 0 : 1)
       );
-      while (firstsentence != -1 && firstsentence - this.story.position < 15) {
+      let linebpos = ta.value.indexOf(
+        "\n",
+        this.story.position + (!this.story.position ? 0 : 1)
+      );
+      let firstsentence = window.Math.min(
+        dotpos == -1 ? 500 : dotpos,
+        linebpos == -1 ? 500 : linebpos
+      );
+      console.log(this.story.position, firstsentence);
+      while (
+        !(dotpos == -1 && linebpos == -1) &&
+        firstsentence - this.story.position < 15
+      ) {
+        let dotpos = ta.value.indexOf(".", firstsentence + 1);
+        let linebpos = ta.value.indexOf("\n", firstsentence + 1);
         firstsentence = window.Math.min(
-          ta.value.indexOf(".", firstsentence + 1),
-          ta.value.indexOf("\n", firstsentence + 1)
+          dotpos == -1 ? 500 : dotpos,
+          linebpos == -1 ? 500 : linebpos
         );
       }
       if (firstsentence - this.story.position > 500) {
@@ -488,10 +527,9 @@ export default {
             var typedarray = new Uint8Array(this.result);
             let pdfjs = await import("pdfjs-dist/webpack");
             let pdf = await pdfjs.getDocument(typedarray);
-            console.log(pdf);
             var maxPages = pdf._pdfInfo.numPages;
             var countPromises = []; // collecting all page promises
-            for (var j = 1; j <= maxPages; j++) {
+            for (var j = 1; j < maxPages; j++) {
               var page = pdf.getPage(j);
               countPromises.push(
                 page.then(function(page) {
@@ -520,8 +558,8 @@ export default {
             }
           } catch (e) {
             console.error(e);
-            continue;
           }
+          continue;
         }
         let text = await files[i].text();
         try {
@@ -557,9 +595,8 @@ export default {
         await this.newstory(url, result);
         await this.savestorycontent(true);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
-      console.log("imported");
       return;
     },
     changetitle() {
@@ -642,12 +679,15 @@ export default {
           window.Math.max(
             ta.value.lastIndexOf(" ", ta.selectionStart || 0),
             ta.value.lastIndexOf("\n", ta.selectionStart || 0)
+          ) + 1,
+        e =
+          window.Math.max(
+            ta.value.lastIndexOf(" ", ta.selectionEnd || 0),
+            ta.value.lastIndexOf("\n", ta.selectionEnd || 0)
           ) + 1;
-      let e = ta.selectionEnd || 0;
-
       let bookmark = {
         start: s,
-        finish: e
+        end: e
       };
       bookmark.title =
         ta.value.slice(
@@ -656,12 +696,30 @@ export default {
         ) + " ...";
       this.story.bookmarks.push(bookmark);
       this.savestory();
+      this.$forceUpdate();
     },
     removebookmark(index) {
       this.story.bookmarks = this.story.bookmarks.filter((v, i) => i != index);
       this.savestory();
+      this.$forceUpdate();
     },
-    gotobookmark() {}
+    gotobookmark(i) {
+      let ta = this.$refs.textarea,
+        bookmark = this.story.bookmarks[i];
+      window.ta = ta;
+      ta.selectionStart = ta.selectionEnd = bookmark.start;
+      ta.blur();
+      ta.focus();
+      ta.selectionEnd =
+        bookmark.start == bookmark.end ? bookmark.end + 1 : bookmark.end;
+      this.showpopup = null;
+    },
+    playbookmark(i) {
+      this.play(false);
+      let bookmark = this.story.bookmarks[i];
+      this.story.position = bookmark.start;
+      this.play(true);
+    }
   },
   computed: {}
 };
@@ -798,8 +856,45 @@ export default {
   box-shadow: 0 -5px 15px gray;
   padding: 10px;
 }
-
-.bookmardspopup {
+.pbsettingspopup {
+  .inputs {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: calc(100% - 32px);
+    overflow: auto;
+    padding-bottom: 20px;
+    .numberinput {
+      @extend .flexcenter;
+      label {
+        margin: 0;
+        flex-grow: 1;
+        text-align: left;
+      }
+      .ninput {
+        width: 50px;
+        padding: 1px;
+      }
+      .decrease,
+      .increase {
+        margin: 0 10px;
+        &:active {
+          .signimg {
+            transform: translatey(2px);
+            filter: none;
+          }
+        }
+      }
+      .signimg {
+        width: 30px;
+        height: 30px;
+        filter: drop-shadow(0px 5px 2px gray);
+      }
+    }
+  }
+}
+.bookmarkspopup {
   .list-group {
     height: calc(100% - 32px);
     overflow: auto;
@@ -808,6 +903,25 @@ export default {
       @extend .flexcenter;
       margin-bottom: 10px;
       padding: 5px;
+      cursor: pointer;
+      user-select: none;
+      .button {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        @extend .flexcenter;
+        padding: 5px;
+        .btnimg {
+          filter: drop-shadow(0px 2px 2px black);
+          border-radius: 50%;
+        }
+        &:active {
+          .btnimg {
+            filter: none;
+            transform: translateY(2px);
+          }
+        }
+      }
       .title {
         text-align: left;
         flex-grow: 1;
@@ -822,6 +936,10 @@ export default {
     }
   }
 }
+.close {
+  color: red;
+  cursor: pointer;
+}
 .storylistpopup {
   .heading {
     position: relative;
@@ -829,7 +947,7 @@ export default {
   }
 
   .list-group {
-    height: calc(100% - 32px);
+    height: calc(100% - 138px);
     overflow: auto;
     padding-bottom: 50px;
     .list-group-item {
