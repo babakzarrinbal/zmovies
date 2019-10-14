@@ -194,6 +194,7 @@
         @change="importstory($event)"
         multiple="true"
         directory="true"
+        accept=".pdf, .ztts, .txt"
       />
       <div
         class="actions flexcenter mb-1 justify-content-between pt-1"
@@ -412,7 +413,6 @@ export default {
         dotpos == -1 ? 500 : dotpos,
         linebpos == -1 ? 500 : linebpos
       );
-      console.log(this.story.position, firstsentence);
       while (
         !(dotpos == -1 && linebpos == -1) &&
         firstsentence - this.story.position < 15
@@ -641,7 +641,11 @@ export default {
           ? window.localStorage.getItem("ttsstory_" + s.id) || ""
           : "";
       });
-      this.downloadfile(JSON.stringify(this.stories), filename + ".bztts");
+      this.downloadfile(
+        JSON.stringify(this.stories),
+        filename + ".ztts",
+        "text/plain"
+      );
       window.confirm("remove all stories?") && this.removeall();
     },
     removeall(alarm) {
@@ -653,7 +657,6 @@ export default {
       this.newstory();
     },
     downloadfile(data, filename, type) {
-      new Blob();
       let file = new Blob([data], { type: type, name: filename });
       if (window.navigator.msSaveOrOpenBlob)
         // IE10+
