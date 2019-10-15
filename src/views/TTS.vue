@@ -277,6 +277,9 @@ export default {
           this.pbsettings.voices.find(v =>
             ["Google US English", "English United States"].includes(v.voiceURI)
           ) || this.pbsettings.voices[0];
+        this.pbsettings.voiceindex = this.pbsettings.voices.findIndex(
+          v => v.name == this.pbsettings.voice.name
+        );
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);
