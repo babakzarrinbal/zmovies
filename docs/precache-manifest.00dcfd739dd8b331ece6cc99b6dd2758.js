@@ -28,8 +28,16 @@ self.__precacheManifest = [
     "url": "/zmovies/robots.txt"
   },
   {
-    "revision": "739e3b38dd01847f3e260b675e600a44",
+    "revision": "6c0f5087bd804bfdd473b9f950b2f8ce",
     "url": "/zmovies/index.html"
+  },
+  {
+    "revision": "8181039b61cfc565659fa059c039e706",
+    "url": "/zmovies/img/ttsicons/plus.svg"
+  },
+  {
+    "revision": "7db92e62bee29459989694fb4526bc16",
+    "url": "/zmovies/img/ttsicons/play.svg"
   },
   {
     "revision": "ce554f9aa15080bcf5d30af0549b0779",
@@ -40,40 +48,32 @@ self.__precacheManifest = [
     "url": "/zmovies/img/ttsicons/settings.svg"
   },
   {
-    "revision": "6ee7698493609851c684cc8b560084a7",
-    "url": "/zmovies/img/ttsicons/play-full.svg"
-  },
-  {
-    "revision": "8181039b61cfc565659fa059c039e706",
-    "url": "/zmovies/img/ttsicons/plus.svg"
-  },
-  {
     "revision": "f7caff4f185c623ba45c02ab832f9c1f",
     "url": "/zmovies/img/ttsicons/bookmark.svg"
-  },
-  {
-    "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
-    "url": "/zmovies/img/loaders/puff.svg"
   },
   {
     "revision": "e3eca74d0d77d7299725c27949c59ebd",
     "url": "/zmovies/img/loaders/rings.svg"
   },
   {
-    "revision": "c02d8862cf165733ed23",
-    "url": "/zmovies/js/app.ecf61bc4.js"
-  },
-  {
     "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
     "url": "/zmovies/img/ttsicons/minus.svg"
+  },
+  {
+    "revision": "1ac06efd89b6061091fd",
+    "url": "/zmovies/js/app.b5d3d799.js"
   },
   {
     "revision": "3a1311d5e71f7d0d9cf75005f1992426",
     "url": "/zmovies/img/ttsicons/next.svg"
   },
   {
-    "revision": "7db92e62bee29459989694fb4526bc16",
-    "url": "/zmovies/img/ttsicons/play.svg"
+    "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
+    "url": "/zmovies/img/loaders/puff.svg"
+  },
+  {
+    "revision": "6ee7698493609851c684cc8b560084a7",
+    "url": "/zmovies/img/ttsicons/play-full.svg"
   },
   {
     "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
@@ -116,8 +116,8 @@ self.__precacheManifest = [
     "url": "/zmovies/css/chunk-vendors.6acb9ff2.css"
   },
   {
-    "revision": "c02d8862cf165733ed23",
-    "url": "/zmovies/css/app.2079eca5.css"
+    "revision": "1ac06efd89b6061091fd",
+    "url": "/zmovies/css/app.92434f76.css"
   },
   {
     "revision": "f67be7be98360e46bca24906ec24d6ae",
