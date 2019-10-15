@@ -271,10 +271,10 @@ export default {
     window.importfromurl = this.importfromurl;
     // let gettingvoices = false;
     let getvoicesinterval = window.setInterval(async () => {
-      if (gettingvoices) return;
+      // if (gettingvoices) return;
       // gettingvoices = true;
       let voices = window.speechSynthesis.getVoices();
-      window.alert(JSON.stringify(voices));
+      // window.alert(JSON.stringify(voices));
       if (voices.length) {
         this.pbsettings.voices = voices;
         this.pbsettings.voice = this.pbsettings.voices[0];
