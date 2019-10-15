@@ -268,11 +268,6 @@ export default {
     };
   },
   created() {
-    window.setInterval(() => {
-      window.alert(
-        this.pbsettings.voice.lang + "  " + this.pbsettings.voice.name
-      );
-    }, 4000);
     window.importfromurl = this.importfromurl;
     let getvoicesinterval = window.setInterval(async () => {
       let voices = window.speechSynthesis.getVoices();
@@ -378,6 +373,7 @@ export default {
         firstsentence
       );
       if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
+      msg.voice = this.pbsettings.voices[3];
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
       let _self = this;
