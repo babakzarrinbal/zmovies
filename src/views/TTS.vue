@@ -372,8 +372,11 @@ export default {
         this.story.position + (!this.story.position ? 0 : 1),
         firstsentence
       );
-      if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
-      msg.voice = this.pbsettings.voices[3];
+      if (this.pbsettings.voice) {
+        msg.voice = this.pbsettings.voice;
+        msg.voiceURI = this.pbsettings.voice.voiceURI;
+        msg.lang = this.pbsettings.voice.lang;
+      }
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
       let _self = this;
