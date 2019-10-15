@@ -514,6 +514,7 @@ export default {
 
       let files = event.target.files;
       for (let i = 0; i < files.length; i++) {
+        // let fname = files[i].name;
         if (files[i].type == "application/pdf") {
           var file = files[i];
           var fileReader = new FileReader();
