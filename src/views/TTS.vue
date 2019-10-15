@@ -273,8 +273,10 @@ export default {
       let voices = window.speechSynthesis.getVoices();
       if (voices.length) {
         this.pbsettings.voices = voices;
-        this.pbsettings.voice = this.pbsettings.voices.find(v => v.default);
-
+        this.pbsettings.voice =
+          this.pbsettings.voices.find(
+            v => v.voiceURI == "Google UK English Female"
+          ) || this.pbsettings.voices[0];
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);
