@@ -268,18 +268,18 @@ export default {
     };
   },
   created() {
+    window.setInterval(() => {
+      window.alert(
+        this.pbsettings.voice.lang + "  " + this.pbsettings.voice.name
+      );
+    }, 4000);
     window.importfromurl = this.importfromurl;
-    // let gettingvoices = false;
     let getvoicesinterval = window.setInterval(async () => {
-      // if (gettingvoices) return;
-      // gettingvoices = true;
       let voices = window.speechSynthesis.getVoices();
-      window.alert(JSON.stringify(voices));
-
       if (voices.length) {
         this.pbsettings.voices = voices;
         this.pbsettings.voice = this.pbsettings.voices.find(v => v.default);
-        console.log();
+
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);
