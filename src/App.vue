@@ -38,17 +38,15 @@
           <a
             @click="nav($event,'/')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==1}"
-          >
-            <img src="img/icon/list.png" alt />
-          </a>
+          >Videos</a>
           <a
-            @click="nav($event,'/drivers')"
+            @click="nav($event,'/musics')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==2}"
-          >Drivers</a>
+          >Musics</a>
           <a
             @click="nav($event,'/tts')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==3}"
-          >TTS</a>
+          >Texts</a>
         </div>
       </div>
     </div>
@@ -86,7 +84,6 @@ export default {
       if (preloader) {
         let eventfunc = () => {
           window.clearTimeout(timer);
-          console.log("removed");
           preloader && preloader.parentNode.removeChild(preloader);
           preloader = null;
         };

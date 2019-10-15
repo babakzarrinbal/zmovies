@@ -28,7 +28,7 @@ self.__precacheManifest = [
     "url": "/zmovies/robots.txt"
   },
   {
-    "revision": "c341bb98b079f6a8e8216259803743b5",
+    "revision": "bd5e402c61095b71ff11f584a033cf28",
     "url": "/zmovies/index.html"
   },
   {
@@ -40,44 +40,44 @@ self.__precacheManifest = [
     "url": "/zmovies/img/ttsicons/settings.svg"
   },
   {
-    "revision": "ce554f9aa15080bcf5d30af0549b0779",
-    "url": "/zmovies/img/ttsicons/refresh.svg"
+    "revision": "7db92e62bee29459989694fb4526bc16",
+    "url": "/zmovies/img/ttsicons/play.svg"
   },
   {
-    "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
-    "url": "/zmovies/img/ttsicons/pause.svg"
+    "revision": "ce554f9aa15080bcf5d30af0549b0779",
+    "url": "/zmovies/img/ttsicons/refresh.svg"
   },
   {
     "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
     "url": "/zmovies/img/loaders/puff.svg"
   },
   {
-    "revision": "e3eca74d0d77d7299725c27949c59ebd",
-    "url": "/zmovies/img/loaders/rings.svg"
-  },
-  {
     "revision": "f7caff4f185c623ba45c02ab832f9c1f",
     "url": "/zmovies/img/ttsicons/bookmark.svg"
   },
   {
-    "revision": "a362abf47e86c97e5fef",
-    "url": "/zmovies/js/app.36c04105.js"
+    "revision": "e3eca74d0d77d7299725c27949c59ebd",
+    "url": "/zmovies/img/loaders/rings.svg"
   },
   {
-    "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
-    "url": "/zmovies/img/ttsicons/minus.svg"
+    "revision": "4d8544676e2995d8f888",
+    "url": "/zmovies/js/app.608e5730.js"
   },
   {
     "revision": "3a1311d5e71f7d0d9cf75005f1992426",
     "url": "/zmovies/img/ttsicons/next.svg"
   },
   {
+    "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
+    "url": "/zmovies/img/ttsicons/minus.svg"
+  },
+  {
     "revision": "6ee7698493609851c684cc8b560084a7",
     "url": "/zmovies/img/ttsicons/play-full.svg"
   },
   {
-    "revision": "7db92e62bee29459989694fb4526bc16",
-    "url": "/zmovies/img/ttsicons/play.svg"
+    "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
+    "url": "/zmovies/img/ttsicons/pause.svg"
   },
   {
     "revision": "3e7f8afa35e80c2ec94e5d93bbf47b3a",
@@ -116,8 +116,8 @@ self.__precacheManifest = [
     "url": "/zmovies/css/chunk-vendors.6acb9ff2.css"
   },
   {
-    "revision": "a362abf47e86c97e5fef",
-    "url": "/zmovies/css/app.9f61ac25.css"
+    "revision": "4d8544676e2995d8f888",
+    "url": "/zmovies/css/app.32ffaf8f.css"
   },
   {
     "revision": "f67be7be98360e46bca24906ec24d6ae",

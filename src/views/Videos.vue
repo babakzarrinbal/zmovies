@@ -3,30 +3,29 @@
     <div class="movielistcontainer">
       <div
         v-for="m in movies"
-        :key="m._id"
+        :key="m.imdb"
         class="d-flex movie bz-card"
         @click="$root.movie = m;$root.showmoviedetail = true"
       >
         <div class="movie-img-container">
-          <img :src="m.img" alt />
+          <img :src="m.info.Poster" alt="N/A" />
         </div>
         <div class="description">
           <div class="header">
-            <span>{{m.year}}</span>
-            <span v-if="m.toyear">- {{m.toyear}}</span>
-            <span>{{" "+m.title}}</span>
+            <span>{{m.info.Year}}</span>
+            <span>{{" "+m.info.Title}}</span>
           </div>
           <div class="body">
             <a
-              :href="'https://imdb.com/title/'+m.imdbid"
+              :href="'https://imdb.com/title/'+m.info.imdbID"
               target="_blank"
               v-on:click.stop
-            >IMDB Rate: {{m.imdbrate}}</a>
-            <span>country: {{m.countries.join(", ")}}</span>
-            <span v-if="(m.stars||[]).length">stars: {{m.stars.join(", ")}}</span>
-            <span v-if="m.summery">
+            >IMDB Rate: {{m.info.imdbRating}}</a>
+            <span>country: {{m.info.Country}}</span>
+            <span>stars: {{m.info.Actors}}</span>
+            <span v-if="m.info.Plot">
               <strong>Description:</strong>
-              {{m.summery}}
+              {{m.info.Plot}}
             </span>
           </div>
         </div>
@@ -41,7 +40,7 @@ export default {
   data() {
     return {
       movies: [],
-      imdbid: "",
+      imdbid: ""
       // window
     };
   },
