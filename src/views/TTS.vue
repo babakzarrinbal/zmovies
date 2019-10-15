@@ -277,7 +277,7 @@ export default {
       // window.alert(JSON.stringify(voices));
       if (voices.length) {
         this.pbsettings.voices = voices;
-        this.pbsettings.voice = this.pbsettings.voices[0];
+        this.pbsettings.voice = this.pbsettings.voices.find(v => v.default);
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);
