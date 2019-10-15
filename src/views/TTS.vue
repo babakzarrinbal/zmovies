@@ -272,12 +272,10 @@ export default {
     let getvoicesinterval = window.setInterval(async () => {
       let voices = window.speechSynthesis.getVoices();
       if (voices.length) {
-        console.log(voices);
-        window.alert(voices.map(v => v.voiceURI).join(", "));
         this.pbsettings.voices = voices;
         this.pbsettings.voice =
-          this.pbsettings.voices.find(
-            v => v.voiceURI == "Google US English Female"
+          this.pbsettings.voices.find(v =>
+            ["Google US English", "English United States"].includes(v.voiceURI)
           ) || this.pbsettings.voices[0];
         window.clearInterval(getvoicesinterval);
       }
