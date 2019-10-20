@@ -269,14 +269,17 @@ export default {
   },
   created() {
     window.importfromurl = this.importfromurl;
-    let gettingvoices = false;
-    let getvoicesinterval = window.setInterval(() => {
-      if (gettingvoices) return;
-      gettingvoices = true;
+    let getvoicesinterval = window.setInterval(async () => {
       let voices = window.speechSynthesis.getVoices();
       if (voices.length) {
         this.pbsettings.voices = voices;
-        this.pbsettings.voice = this.pbsettings.voices[0];
+        this.pbsettings.voice =
+          this.pbsettings.voices.find(v =>
+            ["Google US English", "English United States"].includes(v.voiceURI)
+          ) || this.pbsettings.voices[0];
+        this.pbsettings.voiceindex = this.pbsettings.voices.findIndex(
+          v => v.name == this.pbsettings.voice.name
+        );
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);
@@ -374,7 +377,11 @@ export default {
         this.story.position + (!this.story.position ? 0 : 1),
         firstsentence
       );
-      if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
+      if (this.pbsettings.voice) {
+        msg.voice = this.pbsettings.voice;
+        msg.voiceURI = this.pbsettings.voice.voiceURI;
+        msg.lang = this.pbsettings.voice.lang;
+      }
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
       let _self = this;

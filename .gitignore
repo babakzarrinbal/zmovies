@@ -2,8 +2,8 @@
 node_modules
 .backups
 .history
-public/db
-docs/db
+# public/db
+# docs/db
 # /dist
 
 # local env files

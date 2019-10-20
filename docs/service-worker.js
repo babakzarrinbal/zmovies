@@ -1,4 +1,7 @@
-importScripts("/zmovies/precache-manifest.06196d1c0a0e1e45bc626cc0ca3b046a.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts(
+  "/zmovies/precache-manifest.06196d1c0a0e1e45bc626cc0ca3b046a.js",
+  "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js"
+);
 
 self.addEventListener("install", function(event) {
   // console.log("Service Worker installing.");
@@ -18,7 +21,7 @@ self.addEventListener("push", function(event) {
     body: data.body || "New orders",
     icon: data.icon || "img/icons/logo.png",
     badge: data.badge || "img/icons/logo.png",
-    data,
+    data
   };
 
   if (data.tag) options.tag = data.tag;
@@ -37,4 +40,3 @@ self.addEventListener("notificationclick", function(event) {
     )
   );
 });
-
