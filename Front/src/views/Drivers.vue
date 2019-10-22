@@ -182,7 +182,7 @@ export default {
           };
         })
         .sort((a, b) => (a.total_hours > b.total_hours ? -1 : 1));
-      console.log(resdrivers);
+      // console.log(resdrivers);
       return resdrivers;
     }
   }

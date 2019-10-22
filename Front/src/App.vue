@@ -86,7 +86,6 @@ export default {
       if (preloader) {
         let eventfunc = () => {
           window.clearTimeout(timer);
-          console.log("removed");
           preloader && preloader.parentNode.removeChild(preloader);
           preloader = null;
         };
