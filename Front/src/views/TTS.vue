@@ -584,7 +584,6 @@ export default {
       }
       if (!url) return;
       try {
-        console.log("https://www.literotica.com/s/a-trip-to-rome-1?page=2");
         if (url.includes("literotica.com") && window.confirm("whole Story?")) {
           // https://www.literotica.com/s/a-trip-to-rome-1?page=2
           url = url.slice(0, url.lastIndexOf("?"));
