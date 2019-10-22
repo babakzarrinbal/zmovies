@@ -360,7 +360,7 @@ export default {
       if (firstsentence - this.story.position > 500) {
         firstsentence = ta.value.indexOf(" ", this.story.position + 500);
       }
-      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence ;
+      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence;
 
       if (this.pbsettings.follow) {
         ta.selectionStart = ta.selectionEnd =
@@ -426,7 +426,7 @@ export default {
       if (firstsentence - this.story.position > 500) {
         firstsentence = ta.value.indexOf(" ", this.story.position + 500);
       }
-      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence ;
+      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence;
       if (this.story.position >= ta.value.length) return;
       this.story.position = firstsentence;
       this.play(true);
@@ -586,7 +586,10 @@ export default {
       try {
         if (url.includes("literotica.com") && window.confirm("whole Story?")) {
           // https://www.literotica.com/s/a-trip-to-rome-1?page=2
-          url = url.slice(0, url.lastIndexOf("?"));
+          url =
+            url.lastIndexOf("?") != -1
+              ? url.slice(0, url.lastIndexOf("?"))
+              : url;
           let text = await fetch(
             "https://cors-anywhere.herokuapp.com/" + url
           ).then(r => r.text());
