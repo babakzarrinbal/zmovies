@@ -38,15 +38,17 @@
           <a
             @click="nav($event,'/')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==1}"
-          >Videos</a>
+          >
+            <img src="img/icon/list.png" alt />
+          </a>
           <a
-            @click="nav($event,'/musics')"
+            @click="nav($event,'/drivers')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==2}"
-          >Musics</a>
+          >Drivers</a>
           <a
             @click="nav($event,'/tts')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==3}"
-          >Texts</a>
+          >TTS</a>
         </div>
       </div>
     </div>

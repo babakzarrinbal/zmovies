@@ -259,27 +259,23 @@ export default {
         voiceindex: 0,
         voices: [],
         voice: null,
-        speed: 1.3,
+        speed: 1.1,
         pitch: 1,
-        fontsize: 13,
+        fontsize: 16,
         listactions: false,
         bmactions: false
       }
     };
   },
   created() {
-    window.importfromurl = this.importfromurl;
-    let getvoicesinterval = window.setInterval(async () => {
+    let gettingvoices = false;
+    let getvoicesinterval = window.setInterval(() => {
+      if (gettingvoices) return;
+      gettingvoices = true;
       let voices = window.speechSynthesis.getVoices();
       if (voices.length) {
         this.pbsettings.voices = voices;
-        this.pbsettings.voice =
-          this.pbsettings.voices.find(v =>
-            ["Google US English", "English United States"].includes(v.voiceURI)
-          ) || this.pbsettings.voices[0];
-        this.pbsettings.voiceindex = this.pbsettings.voices.findIndex(
-          v => v.name == this.pbsettings.voice.name
-        );
+        this.pbsettings.voice = this.pbsettings.voices[0];
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);
@@ -364,7 +360,7 @@ export default {
       if (firstsentence - this.story.position > 500) {
         firstsentence = ta.value.indexOf(" ", this.story.position + 500);
       }
-      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence + 1;
+      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence ;
 
       if (this.pbsettings.follow) {
         ta.selectionStart = ta.selectionEnd =
@@ -377,11 +373,7 @@ export default {
         this.story.position + (!this.story.position ? 0 : 1),
         firstsentence
       );
-      if (this.pbsettings.voice) {
-        msg.voice = this.pbsettings.voice;
-        msg.voiceURI = this.pbsettings.voice.voiceURI;
-        msg.lang = this.pbsettings.voice.lang;
-      }
+      if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
       let _self = this;
@@ -434,7 +426,7 @@ export default {
       if (firstsentence - this.story.position > 500) {
         firstsentence = ta.value.indexOf(" ", this.story.position + 500);
       }
-      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence + 1;
+      firstsentence = firstsentence == -1 ? ta.value.length : firstsentence ;
       if (this.story.position >= ta.value.length) return;
       this.story.position = firstsentence;
       this.play(true);
@@ -521,7 +513,7 @@ export default {
 
       let files = event.target.files;
       for (let i = 0; i < files.length; i++) {
-        let fname = files[i].name;
+        // let fname = files[i].name;
         if (files[i].type == "application/pdf") {
           var file = files[i];
           var fileReader = new FileReader();
@@ -592,16 +584,60 @@ export default {
       }
       if (!url) return;
       try {
-        let text = await fetch(
-          "https://cors-anywhere.herokuapp.com/" + url
-        ).then(r => r.text());
-        let result = text
-          .match(/<body[^>]*>(.|[\n\r])*<\/body>/)[0] // get body text
-          .replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gi, "") // remove script tags
-          .replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gi, "") // remove style tags
-          .replace(/<[^>]*>/g, ""); // remove all tags
-        await this.newstory(url, result);
-        await this.savestorycontent(true);
+        if (url.includes("literotica.com") && window.confirm("whole Story?")) {
+          // https://www.literotica.com/s/a-trip-to-rome-1?page=2
+          url = url.slice(0, url.lastIndexOf("?"));
+          let text = await fetch(
+            "https://cors-anywhere.herokuapp.com/" + url
+          ).then(r => r.text());
+          let title = text
+            .match(/<h1[^>]*>(.|[\n\r])*?<\/h1>/)[0]
+            .replace(/<[^>]*>/g, "");
+          let content = text
+            .match(
+              /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
+            )[0]
+            .replace(/<[^>]*>/g, "");
+
+          await this.newstory(title + "_1", content);
+          await this.savestorycontent(true);
+          let pages = text.match(
+            /<select name="page"[^>]*>(.|[\n\r])*?<\/select>/
+          );
+          if (pages) {
+            let allpages = pages[0].match(
+              /<option[^>]*>(.|[\n\r])*?<\/option>/g
+            );
+            let lastpage = window.parseInt(
+              allpages[allpages.length - 1].replace(/<[^>]*>/g, "")
+            );
+            for (let i = 2; i <= lastpage; i++) {
+              let text = await fetch(
+                "https://cors-anywhere.herokuapp.com/" + url + "?page=" + i
+              ).then(r => r.text());
+              content = text
+                .match(
+                  /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
+                )[0]
+                .replace(/<[^>]*>/g, "");
+
+              await this.newstory(title + "_" + i, content);
+              await this.savestorycontent(true);
+            }
+          }
+          // console.log(pages);
+        } else {
+          let text = await fetch(
+            "https://cors-anywhere.herokuapp.com/" + url
+          ).then(r => r.text());
+          let result = text
+            .match(/<body[^>]*>(.|[\n\r])*<\/body>/)[0] // get body text
+            .replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gi, "") // remove script tags
+            .replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gi, "") // remove style tags
+            .replace(/<[^>]*>/g, ""); // remove all tags
+          await this.newstory(url, result);
+          await this.savestorycontent(true);
+        }
       } catch (e) {
         console.error(e);
       }
