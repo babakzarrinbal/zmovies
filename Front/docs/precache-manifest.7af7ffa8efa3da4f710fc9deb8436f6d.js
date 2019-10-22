@@ -52,48 +52,40 @@ self.__precacheManifest = [
     "url": "/zmovies/img/loaders/puff.svg"
   },
   {
-    "revision": "f7caff4f185c623ba45c02ab832f9c1f",
-    "url": "/zmovies/img/ttsicons/bookmark.svg"
-  },
-  {
     "revision": "e3eca74d0d77d7299725c27949c59ebd",
     "url": "/zmovies/img/loaders/rings.svg"
+  },
+  {
+    "revision": "f7caff4f185c623ba45c02ab832f9c1f",
+    "url": "/zmovies/img/ttsicons/bookmark.svg"
   },
   {
     "revision": "8cd999acd6d76041d8dd",
     "url": "/zmovies/js/app.7c13e903.js"
   },
   {
-    "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
-    "url": "/zmovies/img/ttsicons/pause.svg"
-  },
-  {
     "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
     "url": "/zmovies/img/ttsicons/minus.svg"
   },
   {
-    "revision": "3a1311d5e71f7d0d9cf75005f1992426",
-    "url": "/zmovies/img/ttsicons/next.svg"
+    "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
+    "url": "/zmovies/img/ttsicons/pause.svg"
   },
   {
     "revision": "6ee7698493609851c684cc8b560084a7",
     "url": "/zmovies/img/ttsicons/play-full.svg"
   },
   {
+    "revision": "3a1311d5e71f7d0d9cf75005f1992426",
+    "url": "/zmovies/img/ttsicons/next.svg"
+  },
+  {
     "revision": "01711fa464361d1f2c5994e387288432",
     "url": "/zmovies/img/icon/notsee.png"
   },
   {
-    "revision": "7e7fd524bff2b430af8a924bae7b6fad",
-    "url": "/zmovies/img/icon/list.png"
-  },
-  {
-    "revision": "39153b06929a746eee884dd665ab0dc8",
-    "url": "/zmovies/img/icon/setting.png"
-  },
-  {
-    "revision": "3e7f8afa35e80c2ec94e5d93bbf47b3a",
-    "url": "/zmovies/img/icon/see.png"
+    "revision": "32b7ab1d4cfffb87627042b923affa1a",
+    "url": "/zmovies/db/movies/list/lastupdated/1.json.bak"
   },
   {
     "revision": "da8857c4b5ff5228eda7b8bad5514750",
@@ -104,8 +96,16 @@ self.__precacheManifest = [
     "url": "/zmovies/db/movies/list/lastupdated/1.json.bak2"
   },
   {
-    "revision": "32b7ab1d4cfffb87627042b923affa1a",
-    "url": "/zmovies/db/movies/list/lastupdated/1.json.bak"
+    "revision": "39153b06929a746eee884dd665ab0dc8",
+    "url": "/zmovies/img/icon/setting.png"
+  },
+  {
+    "revision": "7e7fd524bff2b430af8a924bae7b6fad",
+    "url": "/zmovies/img/icon/list.png"
+  },
+  {
+    "revision": "3e7f8afa35e80c2ec94e5d93bbf47b3a",
+    "url": "/zmovies/img/icon/see.png"
   },
   {
     "revision": "03c0e918cda12bed27680b35d66c1977",
