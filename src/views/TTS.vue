@@ -343,19 +343,19 @@ export default {
         this.story.position + (!this.story.position ? 0 : 1)
       );
       let firstsentence = window.Math.min(
-        dotpos == -1 ? (this.story.position + 500 ): dotpos,
-        linebpos == -1 ? (this.story.position + 500 ) : linebpos
+        dotpos == -1 ? this.story.position + 500 : dotpos,
+        linebpos == -1 ? this.story.position + 500 : linebpos
       );
       while (
         !(dotpos == -1 && linebpos == -1) &&
         firstsentence - this.story.position < 15
       ) {
-      console.log(firstsentence, this.story.position)
+        console.log(firstsentence, this.story.position);
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
         firstsentence = window.Math.min(
-          dotpos == -1 ? (this.story.position + 500 ) : dotpos,
-          linebpos == -1 ? (this.story.position + 500 ) : linebpos
+          dotpos == -1 ? this.story.position + 500 : dotpos,
+          linebpos == -1 ? this.story.position + 500 : linebpos
         );
       }
       if (firstsentence - this.story.position > 500) {
@@ -410,8 +410,8 @@ export default {
         this.story.position + (!this.story.position ? 0 : 1)
       );
       let firstsentence = window.Math.min(
-        dotpos == -1 ? (this.story.position + 500 )  : dotpos,
-        linebpos == -1 ? (this.story.position + 500 )  : linebpos
+        dotpos == -1 ? this.story.position + 500 : dotpos,
+        linebpos == -1 ? this.story.position + 500 : linebpos
       );
       while (
         !(dotpos == -1 && linebpos == -1) &&
@@ -420,8 +420,8 @@ export default {
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
         firstsentence = window.Math.min(
-          dotpos == -1 ? (this.story.position + 500 )  : dotpos,
-          linebpos == -1 ? (this.story.position + 500 )  : linebpos
+          dotpos == -1 ? this.story.position + 500 : dotpos,
+          linebpos == -1 ? this.story.position + 500 : linebpos
         );
       }
       if (firstsentence - this.story.position > 500) {
@@ -586,6 +586,8 @@ export default {
       if (!url) return;
       try {
         if (url.includes("literotica.com") && window.confirm("whole Story?")) {
+          if (window.confirm("clear all?")) this.removeall(false);
+
           // https://www.literotica.com/s/a-trip-to-rome-1?page=2
           url =
             url.lastIndexOf("?") != -1
