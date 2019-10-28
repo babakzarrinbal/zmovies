@@ -372,7 +372,7 @@ export default {
       msg.text = ta.value.slice(
         this.story.position + (!this.story.position ? 0 : 1),
         firstsentence
-      ).replace(/[.]{2,}/g,"");
+      ).replace(/[.]{2,}/g,"").replace(/\*/g,'');
       if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
@@ -624,7 +624,7 @@ export default {
                 .match(
                   /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
                 )[0]
-                .replace(/<[^>]*>/g, "").replace(/\*/g,'');
+                .replace(/<[^>]*>/g, "");
 
               await this.newstory(title + "_" + i, content);
               await this.savestorycontent(true);
