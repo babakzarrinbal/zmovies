@@ -348,7 +348,7 @@ export default {
       );
       while (
         !(dotpos == -1 && linebpos == -1) &&
-        firstsentence - this.story.position < 15
+        firstsentence - this.story.position < 60
       ) {
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
@@ -414,7 +414,7 @@ export default {
       );
       while (
         !(dotpos == -1 && linebpos == -1) &&
-        firstsentence - this.story.position < 15
+        firstsentence - this.story.position < 60
       ) {
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
@@ -459,7 +459,7 @@ export default {
         this.play(true);
         return;
       }
-      while (firstsentence != -1 && this.story.position - firstsentence < 15) {
+      while (firstsentence != -1 && this.story.position - firstsentence < 60) {
         firstsentence = window.Math.max(
           ta.value.lastIndexOf(".", firstsentence - 1),
           ta.value.lastIndexOf("\n", firstsentence - 1)
