@@ -350,7 +350,6 @@ export default {
         !(dotpos == -1 && linebpos == -1) &&
         firstsentence - this.story.position < 15
       ) {
-        console.log(firstsentence, this.story.position);
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
         firstsentence = window.Math.min(
