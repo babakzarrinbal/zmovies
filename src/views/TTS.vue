@@ -624,7 +624,7 @@ export default {
                 .match(
                   /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
                 )[0]
-                .replace(/<[^>]*>/g, "");
+                .replace(/<[^>]*>/g, "").replace(/\*/g,'');
 
               await this.newstory(title + "_" + i, content);
               await this.savestorycontent(true);
