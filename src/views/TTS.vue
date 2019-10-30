@@ -604,8 +604,7 @@ export default {
             )[0]
             .replace(/<[^>]*>/g, "");
 
-          await this.newstory(title + "_1", content);
-          await this.savestorycontent(true);
+          
           let pages = text.match(
             /<select name="page"[^>]*>(.|[\n\r])*?<\/select>/
           );
@@ -620,16 +619,19 @@ export default {
               let text = await fetch(
                 "https://cors-anywhere.herokuapp.com/" + url + "?page=" + i
               ).then(r => r.text());
-              content = text
+              content += text
                 .match(
                   /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
                 )[0]
                 .replace(/<[^>]*>/g, "");
 
-              await this.newstory(title + "_" + i, content);
-              await this.savestorycontent(true);
+              // await this.newstory(title + "_" + i, content);
+              // await this.savestorycontent(true);
             }
+            
           }
+          await this.newstory(title , content);
+          await this.savestorycontent(true);
           // console.log(pages);
         } else {
           let text = await fetch(
