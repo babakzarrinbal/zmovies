@@ -348,7 +348,7 @@ export default {
       );
       while (
         !(dotpos == -1 && linebpos == -1) &&
-        firstsentence - this.story.position < 60
+        firstsentence - this.story.position < 60 
       ) {
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
@@ -362,17 +362,20 @@ export default {
       }
       firstsentence = firstsentence == -1 ? ta.value.length : firstsentence;
 
+      let pos = this.story.position + (!this.story.position ? 0 : 1);
       if (this.pbsettings.follow) {
-        ta.selectionStart = ta.selectionEnd =
-          this.story.position + (!this.story.position ? 0 : 1);
+        
+        while (["\n", " "].includes(ta.value.slice(pos, pos + 1)))
+          pos = pos + 1;
+        ta.selectionStart = ta.selectionEnd = pos;
         ta.blur();
         ta.focus();
         ta.selectionEnd = firstsentence;
       }
-      msg.text = ta.value.slice(
-        this.story.position + (!this.story.position ? 0 : 1),
-        firstsentence
-      ).replace(/[.]{2,}/g," . ").replace(/\*/g,'');
+      msg.text = ta.value
+        .slice(pos, firstsentence)
+        .replace(/[.]{2,}/g, " . ")
+        .replace(/\*/g, "");
       if (this.pbsettings.voice) msg.voice = this.pbsettings.voice;
       msg.rate = this.pbsettings.speed;
       msg.pitch = this.pbsettings.pitch;
@@ -604,7 +607,6 @@ export default {
             )[0]
             .replace(/<[^>]*>/g, "");
 
-          
           let pages = text.match(
             /<select name="page"[^>]*>(.|[\n\r])*?<\/select>/
           );
@@ -619,18 +621,19 @@ export default {
               let text = await fetch(
                 "https://cors-anywhere.herokuapp.com/" + url + "?page=" + i
               ).then(r => r.text());
-              content += "\n"+text
-                .match(
-                  /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
-                )[0]
-                .replace(/<[^>]*>/g, "");
+              content +=
+                "\n" +
+                text
+                  .match(
+                    /<div class="b-story-body-x x-r15"[^>]*>(.|[\n\r])*?<\/div>/
+                  )[0]
+                  .replace(/<[^>]*>/g, "");
 
               // await this.newstory(title + "_" + i, content);
               // await this.savestorycontent(true);
             }
-            
           }
-          await this.newstory(title , content);
+          await this.newstory(title, content);
           await this.savestorycontent(true);
           // console.log(pages);
         } else {
