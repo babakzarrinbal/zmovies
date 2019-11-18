@@ -38,7 +38,8 @@
       "type": "image/png"
     }
   ],
-  "scope": "/zmovies",
+  "scope": "/zmovies/",
+  "start_url": "/zmovies/index.html",
   "display": "standalone",
   "background_color": "#287cde",
   "theme_color": "#287cde",

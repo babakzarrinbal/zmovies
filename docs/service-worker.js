@@ -1,4 +1,4 @@
-importScripts("/zmovies/precache-manifest.00b02652f1f90c591e132f42831c3256.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts("/zmovies/precache-manifest.3aa73137f2722bffce4a0065d5838322.js", "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 self.addEventListener("install", function(event) {
   // console.log("Service Worker installing.");
