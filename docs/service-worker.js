@@ -1,4 +1,4 @@
-importScripts("/zmovies/precache-manifest.5e199dace44921d238eed1832039a862.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
+importScripts("/zmovies/precache-manifest.2585c6ada9693b872c44afd91cad80b8.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/zmovies/workbox-v3.6.3"});
 self.addEventListener("install", function(event) {
   event.waitUntil(
@@ -17,7 +17,7 @@ self.addEventListener("activate", function(event) {
 });
 self.addEventListener("fetch", function(event) {
   event.respondWith(function(){
-    caches.match(event.request).then(function(response) {
+    return caches.match(event.request).then(function(response) {
       // console.log('response',response.text());
       // response.then('cacheresult',console.log);
         if (response) {

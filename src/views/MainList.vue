@@ -22,8 +22,8 @@
               target="_blank"
               v-on:click.stop
             >IMDB Rate: {{m.imdbrate}}</a>
-            <span>country: {{m.countries.join(", ")}}</span>
-            <span v-if="(m.stars||[]).length">stars: {{m.stars.join(", ")}}</span>
+            <span>country: {{(m.countries||[]).join(", ")}}</span>
+            <span v-if="(m.stars||[]).length">stars: {{(m.stars||[]).join(", ")}}</span>
             <span v-if="m.summery">
               <strong>Description:</strong>
               {{m.summery}}
