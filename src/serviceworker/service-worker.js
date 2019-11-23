@@ -13,26 +13,26 @@ self.addEventListener("install", function(event) {
 self.addEventListener("activate", function(event) {
   // console.log("Service Worker activating.");
 });
-self.addEventListener("fetch", function(event) {
-  event.respondWith(function(){
-    return caches.match(event.request).then(function(response) {
-      // console.log('response',response.text());
-      // response.then('cacheresult',console.log);
-        if (response) {
-            // retrieve from cache
-            return response;
-        }
-        // if not found in cache, return default offline content (only if this is a navigation request)
-        if (event.request.mode === 'navigate') {
-            return caches.match('/zmovies/index.html');
-        }
+// self.addEventListener("fetch", function(event) {
+//   event.respondWith(function(){
+//     return caches.match(event.request).then(function(response) {
+//       // console.log('response',response.text());
+//       // response.then('cacheresult',console.log);
+//         if (response) {
+//             // retrieve from cache
+//             return response;
+//         }
+//         // if not found in cache, return default offline content (only if this is a navigation request)
+//         if (event.request.mode === 'navigate') {
+//             return caches.match('/zmovies/index.html');
+//         }
 
-        // fetch as normal
-        return fetch(event.request);
+//         // fetch as normal
+//         return fetch(event.request);
 
-      });
-    });
-});
+//       });
+//     });
+// });
 
 self.addEventListener("push", function(event) {
   var data = event.data.json();

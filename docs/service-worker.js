@@ -1,4 +1,4 @@
-importScripts("/zmovies/precache-manifest.9534dcdcdf8ef9f785115ed24649081f.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
+importScripts("/zmovies/precache-manifest.e22d6298309fe4f3a7945ece76b8ce7a.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/zmovies/workbox-v3.6.3"});
 self.addEventListener("install", function(event) {
   event.waitUntil(
@@ -15,26 +15,26 @@ self.addEventListener("install", function(event) {
 self.addEventListener("activate", function(event) {
   // console.log("Service Worker activating.");
 });
-self.addEventListener("fetch", function(event) {
-  event.respondWith(function(){
-    return caches.match(event.request).then(function(response) {
-      // console.log('response',response.text());
-      // response.then('cacheresult',console.log);
-        if (response) {
-            // retrieve from cache
-            return response;
-        }
-        // if not found in cache, return default offline content (only if this is a navigation request)
-        if (event.request.mode === 'navigate') {
-            return caches.match('/zmovies/index.html');
-        }
+// self.addEventListener("fetch", function(event) {
+//   event.respondWith(function(){
+//     return caches.match(event.request).then(function(response) {
+//       // console.log('response',response.text());
+//       // response.then('cacheresult',console.log);
+//         if (response) {
+//             // retrieve from cache
+//             return response;
+//         }
+//         // if not found in cache, return default offline content (only if this is a navigation request)
+//         if (event.request.mode === 'navigate') {
+//             return caches.match('/zmovies/index.html');
+//         }
 
-        // fetch as normal
-        return fetch(event.request);
+//         // fetch as normal
+//         return fetch(event.request);
 
-      });
-    });
-});
+//       });
+//     });
+// });
 
 self.addEventListener("push", function(event) {
   var data = event.data.json();
