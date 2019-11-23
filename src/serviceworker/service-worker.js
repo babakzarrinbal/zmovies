@@ -1,12 +1,37 @@
 self.addEventListener("install", function(event) {
-  // console.log("Service Worker installing.");
+  event.waitUntil(
+    caches.open('offlinecaches').then(function(cache) {
+      return cache.addAll(
+        [
+          '/zmovies/index.html'
+        ]
+      );
+    })
+  );
 });
 
 self.addEventListener("activate", function(event) {
   // console.log("Service Worker activating.");
 });
-self.addEventListener("fetch", function(e) {
-  // console.log("fetched", e.request.url);
+self.addEventListener("fetch", function(event) {
+  event.respondWith(function(){
+    caches.match(event.request).then(function(response) {
+      // console.log('response',response.text());
+      // response.then('cacheresult',console.log);
+        if (response) {
+            // retrieve from cache
+            return new Promise(r=>r(response));
+        }
+        // if not found in cache, return default offline content (only if this is a navigation request)
+        if (event.request.mode === 'navigate') {
+            return caches.match('/zmovies/index.html');
+        }
+
+        // fetch as normal
+        return fetch(event.request);
+
+      });
+    });
 });
 
 self.addEventListener("push", function(event) {

@@ -15,7 +15,8 @@ module.exports = {
   pwa: {
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
-      swSrc: "./src/serviceworker/service-worker.js"
+      swSrc: "./src/serviceworker/service-worker.js",
+      importWorkboxFrom:"local"
     }
     // iconPaths: {
     //   favicon32: "img/icons/favicon-32x32.png",
