@@ -1,4 +1,4 @@
-importScripts("/zmovies/precache-manifest.0d6cb87b973fbd50298165e7378ef345.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
+importScripts("/zmovies/precache-manifest.5e199dace44921d238eed1832039a862.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/zmovies/workbox-v3.6.3"});
 self.addEventListener("install", function(event) {
   event.waitUntil(
@@ -22,7 +22,7 @@ self.addEventListener("fetch", function(event) {
       // response.then('cacheresult',console.log);
         if (response) {
             // retrieve from cache
-            return new Promise(r=>r(response));
+            return response;
         }
         // if not found in cache, return default offline content (only if this is a navigation request)
         if (event.request.mode === 'navigate') {

@@ -20,7 +20,7 @@ self.addEventListener("fetch", function(event) {
       // response.then('cacheresult',console.log);
         if (response) {
             // retrieve from cache
-            return new Promise(r=>r(response));
+            return response;
         }
         // if not found in cache, return default offline content (only if this is a navigation request)
         if (event.request.mode === 'navigate') {
