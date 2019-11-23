@@ -1,4 +1,4 @@
-importScripts("/zmovies/precache-manifest.2585c6ada9693b872c44afd91cad80b8.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
+importScripts("/zmovies/precache-manifest.9534dcdcdf8ef9f785115ed24649081f.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/zmovies/workbox-v3.6.3"});
 self.addEventListener("install", function(event) {
   event.waitUntil(
