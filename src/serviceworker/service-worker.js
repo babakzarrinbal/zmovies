@@ -1,50 +1,44 @@
-self.addEventListener("install", function(event) {
-  event.waitUntil(
-    caches.open('offlinecaches').then(function(cache) {
-      return cache.addAll(
-        [
-          '/zmovies/index.html'
-        ]
-      );
-    })
-  );
-});
+// workbox.core.skipWaiting();
+// workbox.core.clientsClaim();
 
-self.addEventListener("activate", function(event) {
-  // console.log("Service Worker activating.");
-});
-// self.addEventListener("fetch", function(event) {
-//   event.respondWith(function(){
-//     return caches.match(event.request).then(function(response) {
-//       // console.log('response',response.text());
-//       // response.then('cacheresult',console.log);
-//         if (response) {
-//             // retrieve from cache
-//             return response;
-//         }
-//         // if not found in cache, return default offline content (only if this is a navigation request)
-//         if (event.request.mode === 'navigate') {
-//             return caches.match('/zmovies/index.html');
-//         }
+workbox.precaching.precacheAndRoute([
+  // "/json-mapping-front/workbox-v4.3.1/workbox-sw.js",
+  // "/json-mapping-front/service-worker.js",
+  // ...self.__precacheManifest.map(i => i.url)
+  ...self.__precacheManifest
+]);
 
-//         // fetch as normal
-//         return fetch(event.request);
-
-//       });
-//     });
-// });
+// workbox.routing.registerRoute(
+//   /\.[png|jpg|svg|js|css|html|json]$/,
+//   new workbox.strategies.NetworkFirst()
+// );
+// workbox.routing.registerRoute(/\.[]$/, new workbox.strategies.NetworkFirst());
 
 self.addEventListener("push", function(event) {
-  var data = event.data.json();
-  const title = data.title || "Driver @ Dilivir";
-  const options = {
-    body: data.body || "New orders",
-    icon: data.icon || "img/icons/logo.png",
-    badge: data.badge || "img/icons/logo.png",
-    data,
-  };
+  let data, title, options;
+  try {
+    data = event.data.json();
+    title = data.title || "Notification";
+    options = {
+      body: data.body || "Notificatioin",
+      icon: data.icon || "img/icons/logo.png",
+      badge: data.badge || "img/icons/logo.png",
+      data
+    };
 
-  if (data.tag) options.tag = data.tag;
+    if (data.tag) options.tag = data.tag;
+  }catch(e){
+    data = event.data.text();
+    title = data || "Notification";
+    options = {
+      body: data || "Notificatioin",
+      icon:  "img/icons/logo.png",
+      badge: "img/icons/logo.png",
+      data
+    };
+
+  }
+
   const notificationPromise = self.registration.showNotification(
     title,
     options
@@ -54,9 +48,10 @@ self.addEventListener("push", function(event) {
 
 self.addEventListener("notificationclick", function(event) {
   event.notification.close();
-  event.waitUntil(
-    clients.openWindow(
-      "http://localhost:5000/#/" + (event.notification.data || {}).gotourl || ""
-    )
-  );
+  console.log(event.notification.data);
+  // event.waitUntil(
+  //   clients.openWindow(
+  //     "http://localhost:5000/#/" + (event.notification.data || {}).gotourl || ""
+  //   )
+  // );
 });
