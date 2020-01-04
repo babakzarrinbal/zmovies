@@ -58,3 +58,18 @@ new Vue({
   },
   render: h => h(App)
 }).$mount("#app");
+
+const requestWakeLock = async () => {
+  try {
+    window.wakeLock = await window.navigator.wakeLock.request('screen');
+    window.wakeLock.addEventListener('release', () => {
+      console.log('Wake Lock was released');
+    });
+    console.log('Wake Lock is active');
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+};
+
+// Request a wake lock…
+await requestWakeLock();
