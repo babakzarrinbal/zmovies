@@ -1,4 +1,4 @@
-importScripts("/zmovies/precache-manifest.e6fafd344d7ee67e1a43d1fb23faea06.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
+importScripts("/zmovies/precache-manifest.30c5f258d6254caad60243483e606ad7.js", "/zmovies/workbox-v3.6.3/workbox-sw.js");
 workbox.setConfig({modulePathPrefix: "/zmovies/workbox-v3.6.3"});
 // workbox.core.skipWaiting();
 // workbox.core.clientsClaim();

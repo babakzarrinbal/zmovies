@@ -72,4 +72,12 @@ const requestWakeLock = async () => {
 };
 
 // Request a wake lock…
-await requestWakeLock();
+requestWakeLock();
+const handleVisibilityChange = () => {
+  if (window.wakeLock !== null && window.document.visibilityState === 'visible') {
+    requestWakeLock();
+  }
+};
+
+window.document.addEventListener('visibilitychange', handleVisibilityChange);
+window.document.addEventListener('fullscreenchange', handleVisibilityChange);

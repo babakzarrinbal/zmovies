@@ -28,48 +28,48 @@ self.__precacheManifest = [
     "url": "/zmovies/robots.txt"
   },
   {
-    "revision": "dcf98b77c1e8266ad6c62fa2b9f921b9",
+    "revision": "7e81ef24feccb6d4ea63849d0a2b89e7",
     "url": "/zmovies/index.html"
-  },
-  {
-    "revision": "50acadf632bc9506653499fff9bb30ac",
-    "url": "/zmovies/img/ttsicons/settings.svg"
   },
   {
     "revision": "ce554f9aa15080bcf5d30af0549b0779",
     "url": "/zmovies/img/ttsicons/refresh.svg"
   },
   {
-    "revision": "7db92e62bee29459989694fb4526bc16",
-    "url": "/zmovies/img/ttsicons/play.svg"
+    "revision": "50acadf632bc9506653499fff9bb30ac",
+    "url": "/zmovies/img/ttsicons/settings.svg"
   },
   {
     "revision": "8181039b61cfc565659fa059c039e706",
     "url": "/zmovies/img/ttsicons/plus.svg"
   },
   {
-    "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
-    "url": "/zmovies/img/loaders/puff.svg"
+    "revision": "7db92e62bee29459989694fb4526bc16",
+    "url": "/zmovies/img/ttsicons/play.svg"
   },
   {
     "revision": "e3eca74d0d77d7299725c27949c59ebd",
     "url": "/zmovies/img/loaders/rings.svg"
   },
   {
+    "revision": "d8f8be8601d46e34d280ea4e44a5be1d",
+    "url": "/zmovies/img/loaders/puff.svg"
+  },
+  {
     "revision": "f7caff4f185c623ba45c02ab832f9c1f",
     "url": "/zmovies/img/ttsicons/bookmark.svg"
   },
   {
-    "revision": "cac6b44971da951c38cf",
-    "url": "/zmovies/js/app.34af8454.js"
-  },
-  {
-    "revision": "3a1311d5e71f7d0d9cf75005f1992426",
-    "url": "/zmovies/img/ttsicons/next.svg"
+    "revision": "cbafdb4b568dbbea5a4d",
+    "url": "/zmovies/js/app.ec343a3e.js"
   },
   {
     "revision": "20ca233e48ad5b5a127f6f1d86a4e4ef",
     "url": "/zmovies/img/ttsicons/minus.svg"
+  },
+  {
+    "revision": "3a1311d5e71f7d0d9cf75005f1992426",
+    "url": "/zmovies/img/ttsicons/next.svg"
   },
   {
     "revision": "14b4111eac1e3e8aeaaee5e2d9685dc6",
@@ -116,7 +116,7 @@ self.__precacheManifest = [
     "url": "/zmovies/css/chunk-vendors.6acb9ff2.css"
   },
   {
-    "revision": "cac6b44971da951c38cf",
+    "revision": "cbafdb4b568dbbea5a4d",
     "url": "/zmovies/css/app.378bd6a2.css"
   },
   {
