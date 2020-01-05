@@ -268,14 +268,15 @@ export default {
     };
   },
   created() {
-    let gettingvoices = false;
+    let getvoicestry = 0;
+    let _self = this;
+    window.speechSynthesis.addEventListener('voiceschanged', ()=>console.log("voiceschanged"))
     let getvoicesinterval = window.setInterval(() => {
-      if (gettingvoices) return;
-      gettingvoices = true;
+      getvoicestry++;
       let voices = window.speechSynthesis.getVoices();
-      if (voices.length) {
-        this.pbsettings.voices = voices;
-        this.pbsettings.voice = this.pbsettings.voices[0];
+      if (voices.length || getvoicestry>10) {
+        _self.pbsettings.voices = voices;
+        _self.pbsettings.voice = _self.pbsettings.voices[0];
         window.clearInterval(getvoicesinterval);
       }
     }, 1500);

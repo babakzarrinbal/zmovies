@@ -59,6 +59,15 @@ new Vue({
   render: h => h(App)
 }).$mount("#app");
 
+// const { app } = require('electron')
+// app.on('ready', () => {
+//   // ...
+//   if (process.env.NODE_ENV !== 'production') {
+//     require('vue-devtools').install()
+//   }
+//   // ...
+// })
+
 const requestWakeLock = async () => {
   try {
     window.wakeLock = await window.navigator.wakeLock.request('screen');
@@ -67,7 +76,7 @@ const requestWakeLock = async () => {
     });
     console.log('Wake Lock is active');
   } catch (err) {
-    console.error(`${err.name}, ${err.message}`);
+    console.error(err);
   }
 };
 
