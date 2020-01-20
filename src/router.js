@@ -1,27 +1,27 @@
 import Vue from "vue";
 import Router from "vue-router";
-import MainList from "./views/MainList.vue";
+// import MainList from "./views/MainList.vue";
+// import Drivers from "./views/Drivers.vue";
 import TTS from "./views/TTS.vue";
-import Drivers from "./views/Drivers.vue";
 
 Vue.use(Router);
 
 var router = new Router({
   routes: [
+    // {
+    //   path: "/",
+    //   name: "MainList",
+    //   component: MainList,
+    //   meta: { mainindex: 1, keepAlive: true }
+    // },
+    // {
+    //   path: "/drivers",
+    //   name: "Drivers",
+    //   component: Drivers,
+    //   meta: { mainindex: 2, keepAlive: true }
+    // },
     {
       path: "/",
-      name: "MainList",
-      component: MainList,
-      meta: { mainindex: 1, keepAlive: true }
-    },
-    {
-      path: "/drivers",
-      name: "Drivers",
-      component: Drivers,
-      meta: { mainindex: 2, keepAlive: true }
-    },
-    {
-      path: "/tts",
       name: "TTS",
       component: TTS,
       meta: { mainindex: 3, keepAlive: true }

@@ -34,7 +34,7 @@
             />
           </keep-alive>
         </transition>
-        <div id="nav" class="d-flex justify-content-around">
+        <!-- <div id="nav" class="d-flex justify-content-around">
           <a
             @click="nav($event,'/')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==1}"
@@ -49,7 +49,7 @@
             @click="nav($event,'/tts')"
             v-bind:class="{'router-link-exact-active router-link-active':$route.meta.mainindex==3}"
           >TTS</a>
-        </div>
+        </div> -->
       </div>
     </div>
   </transition>
@@ -180,7 +180,8 @@ export default {
   overflow: hidden;
 }
 .mainrouteview {
-  height: calc(100% - 35px);
+  height: 100%;
+  // height: calc(100% - 35px);
   padding-top: 30px;
   overflow: auto;
   position: relative;

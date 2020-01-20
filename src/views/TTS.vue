@@ -68,6 +68,9 @@
         >
           <img src="img/ttsicons/settings.svg" alt="playbacksettings" class="btnimg" />
         </div>
+        <div class="playbacksettings button" @click="fullscreen(true)">
+          <img src="img/ttsicons/shield.svg" alt="playbacksettings" class="btnimg" />
+        </div>
       </div>
     </div>
     <div v-if="showpopup == 'setting'" class="pbsettingspopup">
@@ -232,6 +235,30 @@
         </li>
       </ul>
     </div>
+    <div
+      class="position-fixed d-flex justify-content-center align-items-center overflow-hidden"
+      :style="'height:'+(isfullscreen?'100vh;':'0px !important;')+'width:'+ (isfullscreen?'100vw;':'0;')"
+      style="z-index:100;top:0;background-color:black;"
+      @click="fullscreen(false)"
+      ref="fullscreenele"
+    >
+    <div class="controllers d-flex ">
+      <div class="previous reverse button p-4" @click.stop="prev()">
+          <img src="img/ttsicons/next-w.svg" alt="prev" class="btnimg" style="transform: rotateZ(180deg);width:50px;height:50px;"/>
+        </div>
+        <div class="playpause button p-4" @click.stop="showpopup= null;play()">
+          <img
+            :src="'img/ttsicons/'+(playing?'pause':'play')+'-w.svg'"
+            alt="play/pause"
+            class="btnimg"
+            style="width:50px;height:50px;"
+          />
+        </div>
+        <div class="next button p-4" @click.stop="next()">
+          <img src="img/ttsicons/next-w.svg" alt="next " class="btnimg" style="width:50px;height:50px;"/>
+        </div>
+    </div>
+    </div>
   </div>
 </template>
 
@@ -246,6 +273,7 @@ export default {
       ? window.localStorage.getItem("ttsstory_" + story.id) || ""
       : "";
     return {
+      isfullscreen: false,
       window,
       speech: window.speechSynthesis,
       stories,
@@ -270,11 +298,13 @@ export default {
   created() {
     let getvoicestry = 0;
     let _self = this;
-    window.speechSynthesis.addEventListener('voiceschanged', ()=>console.log("voiceschanged"))
+    window.speechSynthesis.addEventListener("voiceschanged", () =>
+      console.log("voiceschanged")
+    );
     let getvoicesinterval = window.setInterval(() => {
       getvoicestry++;
       let voices = window.speechSynthesis.getVoices();
-      if (voices.length || getvoicestry>10) {
+      if (voices.length || getvoicestry > 10) {
         _self.pbsettings.voices = voices;
         _self.pbsettings.voice = _self.pbsettings.voices[0];
         window.clearInterval(getvoicesinterval);
@@ -288,6 +318,15 @@ export default {
   },
   async beforeDestroy() {},
   methods: {
+    fullscreen(action) {
+      if (!action) {
+        this.isfullscreen = false;
+        window.document.exitFullscreen();
+        return;
+      }
+      let ele = this.$refs.fullscreenele;
+      ele.requestFullscreen();
+    },
     queryhandeler(q) {
       if (!q.url) return;
       let router = this.$router;
@@ -349,7 +388,7 @@ export default {
       );
       while (
         !(dotpos == -1 && linebpos == -1) &&
-        firstsentence - this.story.position < 60 
+        firstsentence - this.story.position < 60
       ) {
         let dotpos = ta.value.indexOf(".", firstsentence + 1);
         let linebpos = ta.value.indexOf("\n", firstsentence + 1);
@@ -365,7 +404,6 @@ export default {
 
       let pos = this.story.position + (!this.story.position ? 0 : 1);
       if (this.pbsettings.follow) {
-        
         while (["\n", " "].includes(ta.value.slice(pos, pos + 1)))
           pos = pos + 1;
         ta.selectionStart = ta.selectionEnd = pos;
